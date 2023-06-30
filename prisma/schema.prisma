@@ -1,0 +1,163 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model ANNOUNCEMENTS {
+  uuid       String    @id @db.Char(36)
+  title      String    @db.VarChar(100)
+  slug       String    @unique(map: "announcements_slug_unique") @db.VarChar(150)
+  content    String    @db.Text
+  created_at DateTime? @db.Timestamp(0)
+  updated_at DateTime? @db.Timestamp(0)
+}
+
+model BANNERS {
+  uuid       String    @id @db.Char(36)
+  name       String    @db.VarChar(30)
+  image      String    @db.VarChar(255)
+  created_at DateTime? @db.Timestamp(0)
+  updated_at DateTime? @db.Timestamp(0)
+}
+
+model CUSTOM_ATTENDANCE_LOCATIONS {
+  uuid                        String    @id @db.Char(36)
+  employee_uuid               String    @db.Char(36)
+  start_date                  DateTime  @db.DateTime(0)
+  end_date                    DateTime  @db.DateTime(0)
+  presence_location_address   String    @db.Text
+  presence_location_latitude  Float
+  presence_location_longitude Float
+  created_at                  DateTime? @db.Timestamp(0)
+  updated_at                  DateTime? @db.Timestamp(0)
+  EMPLOYEES                   EMPLOYEES @relation(fields: [employee_uuid], references: [uuid], onDelete: Cascade, onUpdate: Restrict, map: "custom_attendance_locations_employee_uuid_foreign")
+
+  @@index([employee_uuid], map: "custom_attendance_locations_employee_uuid_foreign")
+}
+
+model DAILY_ATTENDANCES {
+  uuid                     String                                   @id @db.Char(36)
+  employee_uuid            String                                   @db.Char(36)
+  date                     DateTime                                 @db.DateTime(0)
+  presence_entry_status    DAILY_ATTENDANCES_presence_entry_status?
+  presence_exit_status     DAILY_ATTENDANCES_presence_exit_status?
+  presence_entry_address   String                                   @db.Text
+  presence_entry_latitude  Float
+  presence_entry_longitude Float
+  presence_exit_address    String?                                  @db.Text
+  presence_exit_latitude   Float?
+  presence_exit_longitude  Float?
+  reference_address        String                                   @db.Text
+  reference_latitude       Float
+  reference_longitude      Float
+  created_at               DateTime?                                @db.Timestamp(0)
+  updated_at               DateTime?                                @db.Timestamp(0)
+  EMPLOYEES                EMPLOYEES                                @relation(fields: [employee_uuid], references: [uuid], onDelete: Cascade, onUpdate: Restrict, map: "daily_attendances_employee_uuid_foreign")
+
+  @@index([employee_uuid], map: "daily_attendances_employee_uuid_foreign")
+}
+
+model EMPLOYEES {
+  uuid                        String                        @id @db.Char(36)
+  job_position_uuid           String                        @db.Char(36)
+  name                        String                        @db.VarChar(60)
+  email                       String                        @unique(map: "employees_email_unique") @db.VarChar(60)
+  password                    String                        @db.VarChar(255)
+  photo                       String?                       @db.VarChar(255)
+  token                       String?                       @db.LongText
+  created_at                  DateTime?                     @db.Timestamp(0)
+  updated_at                  DateTime?                     @db.Timestamp(0)
+  CUSTOM_ATTENDANCE_LOCATIONS CUSTOM_ATTENDANCE_LOCATIONS[]
+  DAILY_ATTENDANCES           DAILY_ATTENDANCES[]
+  JOB_POSITIONS               JOB_POSITIONS                 @relation(fields: [job_position_uuid], references: [uuid], onUpdate: Restrict, map: "employees_job_position_uuid_foreign")
+
+  @@index([job_position_uuid], map: "employees_job_position_uuid_foreign")
+}
+
+model JOB_POSITIONS {
+  uuid       String      @id @db.Char(36)
+  name       String      @db.VarChar(60)
+  code       String      @db.VarChar(10)
+  created_at DateTime?   @db.Timestamp(0)
+  updated_at DateTime?   @db.Timestamp(0)
+  EMPLOYEES  EMPLOYEES[]
+}
+
+model SETTINGS {
+  uuid                        String    @id @db.Char(36)
+  office_name                 String    @db.VarChar(60)
+  office_logo                 String?   @db.VarChar(255)
+  presence_entry_start        DateTime  @db.Time(0)
+  presence_entry_end          DateTime  @db.Time(0)
+  presence_exit               DateTime  @db.Time(0)
+  presence_location_address   String    @db.Text
+  presence_location_latitude  Float
+  presence_location_longitude Float
+  presence_meter_radius       Int
+  created_at                  DateTime? @db.Timestamp(0)
+  updated_at                  DateTime? @db.Timestamp(0)
+}
+
+model USERS {
+  uuid           String    @id @db.Char(36)
+  name           String    @db.VarChar(60)
+  email          String    @unique(map: "users_email_unique") @db.VarChar(60)
+  password       String    @db.VarChar(255)
+  photo          String?   @db.VarChar(255)
+  remember_token String?   @db.VarChar(100)
+  created_at     DateTime? @db.Timestamp(0)
+  updated_at     DateTime? @db.Timestamp(0)
+}
+
+model failed_jobs {
+  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  uuid       String   @unique(map: "failed_jobs_uuid_unique") @db.VarChar(255)
+  connection String   @db.Text
+  queue      String   @db.Text
+  payload    String   @db.LongText
+  exception  String   @db.LongText
+  failed_at  DateTime @default(now()) @db.Timestamp(0)
+}
+
+model migrations {
+  id        Int    @id @default(autoincrement()) @db.UnsignedInt
+  migration String @db.VarChar(255)
+  batch     Int
+}
+
+model password_reset_tokens {
+  email      String    @id @db.VarChar(255)
+  token      String    @db.VarChar(255)
+  created_at DateTime? @db.Timestamp(0)
+}
+
+model personal_access_tokens {
+  id             BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  tokenable_type String    @db.VarChar(255)
+  tokenable_id   BigInt    @db.UnsignedBigInt
+  name           String    @db.VarChar(255)
+  token          String    @unique(map: "personal_access_tokens_token_unique") @db.VarChar(64)
+  abilities      String?   @db.Text
+  last_used_at   DateTime? @db.Timestamp(0)
+  expires_at     DateTime? @db.Timestamp(0)
+  created_at     DateTime? @db.Timestamp(0)
+  updated_at     DateTime? @db.Timestamp(0)
+
+  @@index([tokenable_type, tokenable_id], map: "personal_access_tokens_tokenable_type_tokenable_id_index")
+}
+
+enum DAILY_ATTENDANCES_presence_entry_status {
+  on_time
+  late
+  not_present
+}
+
+enum DAILY_ATTENDANCES_presence_exit_status {
+  on_time
+  early
+  not_present
+}
