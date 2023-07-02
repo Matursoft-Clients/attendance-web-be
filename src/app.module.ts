@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
-import { EmployeeModule } from './employee/employee.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { TokenModule } from './helpers/tokenHelper/token.module';
 import { GetCurrentUserModule } from './helpers/getCurrentUserHelper/getCurrentUser.module';
+import { RequestContextModule } from 'nestjs-request-context';
+import { SettingModule } from './setting/setting.module';
 
 @Module({
   imports: [
@@ -13,11 +13,11 @@ import { GetCurrentUserModule } from './helpers/getCurrentUserHelper/getCurrentU
       isGlobal: true,
     }),
     AuthModule,
-    UserModule,
-    EmployeeModule,
     PrismaModule,
     TokenModule,
     GetCurrentUserModule,
+    RequestContextModule,
+    SettingModule,
   ],
 })
 export class AppModule { }

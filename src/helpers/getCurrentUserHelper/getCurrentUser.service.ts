@@ -1,7 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { TokenHelper } from "../tokenHelper/token.service";
-import { decode } from "punycode";
-import { PrismaService } from "src/prisma/prisma.service";
 
 @Injectable()
 export class GetCurrentUserHelper {
@@ -17,14 +15,12 @@ export class GetCurrentUserHelper {
                 }
             });
 
-            console.log(user)
-
             return user;
         } catch (error) {
             throw new HttpException(
                 {
                     code: HttpStatus.UNAUTHORIZED,
-                    msg: error,
+                    msg: "Invalid Token",
                 },
                 HttpStatus.UNAUTHORIZED,
             );

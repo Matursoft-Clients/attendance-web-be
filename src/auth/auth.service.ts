@@ -7,10 +7,11 @@ import { GetCurrentUserHelper } from "src/helpers/getCurrentUserHelper/getCurren
 import { Request } from "express";
 
 @Injectable()
-
 export class AuthService {
     constructor(private prisma: PrismaService, private tokenHelper: TokenHelper, private getCurrentUserHelper: GetCurrentUserHelper) { }
+
     async login(dto: AuthDto) {
+
         // find the user by email
         const user =
             await this.prisma.uSERS.findUnique({
@@ -18,11 +19,12 @@ export class AuthService {
                     email: dto.email,
                 },
             });
+
         // if user does not exist throw exception
         if (!user)
             throw new HttpException(
                 {
-                    code: 422,
+                    code: HttpStatus.UNPROCESSABLE_ENTITY,
                     msg: 'Email or Password is Wrong',
                 },
                 HttpStatus.UNPROCESSABLE_ENTITY,
@@ -38,7 +40,7 @@ export class AuthService {
         if (!pwMatches)
             throw new HttpException(
                 {
-                    code: 422,
+                    code: HttpStatus.UNPROCESSABLE_ENTITY,
                     msg: 'Email or Password is Wrong',
                 },
                 HttpStatus.UNPROCESSABLE_ENTITY,
@@ -51,10 +53,20 @@ export class AuthService {
     }
 
     async getCurrentUser(@Req() req: Request) {
-        // Get Current User
-        const user = await this.getCurrentUserHelper.getCurrentUser(req.headers.authorization.replace('Bearer ', ''), this.prisma.uSERS);
-        console.log(user);
+        try {
+            // Get Current User
+            const user = await this.getCurrentUserHelper.getCurrentUser(req.headers.authorization.replace('Bearer ', ''), this.prisma.uSERS);
 
-        return user;
+            return user;
+
+        } catch (error) {
+            throw new HttpException(
+                {
+                    code: HttpStatus.UNAUTHORIZED,
+                    msg: 'Invalid Token',
+                },
+                HttpStatus.UNAUTHORIZED,
+            );
+        }
     }
 }

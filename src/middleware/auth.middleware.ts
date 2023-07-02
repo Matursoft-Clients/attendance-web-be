@@ -7,9 +7,9 @@ export class AuthMiddleware implements NestMiddleware {
     constructor(private tokenHelper: TokenHelper) { }
     use(req: Request, res: Response, next: NextFunction) {
         // Token
-        const token = req.headers.authorization?.replace('Bearer ', '');
+        const token = req.headers.authorization.replace('Bearer ', '');
 
-
+        console.log(token)
         try {
             const decodedToken = this.tokenHelper.decode(token);
             if (decodedToken.expired_at < Date.now()) {

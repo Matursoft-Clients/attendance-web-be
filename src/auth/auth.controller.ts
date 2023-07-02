@@ -17,7 +17,7 @@ export class AuthController {
             code: 200,
             msg: 'You Have Successfully Login',
             data: {
-                token: token
+                token
             },
         });
     }
