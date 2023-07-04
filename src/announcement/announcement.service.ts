@@ -5,6 +5,7 @@ import * as slug from 'slug';
 import * as randomstring from 'randomstring';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateAnnouncementDto } from './dto/create-announcement.dto';
+import { AnnouncementDTO } from './announcement.interface';
 
 @Injectable()
 export class AnnouncementService {
@@ -35,8 +36,13 @@ export class AnnouncementService {
     }
   }
 
-  async findAll() {
-    return await this.prisma.aNNOUNCEMENTS.findMany()
+  async findAll(): Promise<AnnouncementDTO[]> {
+    const announcements = await this.prisma.aNNOUNCEMENTS.findMany()
+
+    return announcements.map((item) => {
+      const { content, ...rest } = item;
+      return rest as AnnouncementDTO;
+    });
   }
 
   async findOne(uuid: string) {
@@ -48,8 +54,19 @@ export class AnnouncementService {
     })
   }
 
-  update(uuid: string, updateAnnouncementDto: UpdateAnnouncementDto) {
-    return `This action updates a #${uuid} announcement`;
+  async update(uuid: string, updateAnnouncementDto: UpdateAnnouncementDto) {
+    const announcementUpdate = await this.prisma.aNNOUNCEMENTS.update({
+      where: {
+        uuid
+      },
+      data: {
+        title: updateAnnouncementDto.title,
+        content: updateAnnouncementDto.content,
+        updated_at: new Date()
+      }
+    })
+
+    return announcementUpdate
   }
 
   async remove(uuid: string) {

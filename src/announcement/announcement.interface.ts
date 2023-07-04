@@ -1,6 +1,6 @@
 import { AnnouncementEntity } from "./announcement.entity";
 
-interface AnnouncementData {
+export interface AnnouncementDTO {
     uuid: string;
     title: string;
     slug: string;

@@ -7,7 +7,8 @@ import { NestjsFormDataModule } from 'nestjs-form-data';
   controllers: [AnnouncementController],
   providers: [AnnouncementService],
   imports: [
-    NestjsFormDataModule
+    NestjsFormDataModule,
   ]
 })
 export class AnnouncementModule { }
+

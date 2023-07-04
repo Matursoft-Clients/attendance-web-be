@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, BeforeUpdate } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('announcement')
 export class AnnouncementEntity {
@@ -14,9 +14,6 @@ export class AnnouncementEntity {
     @Column()
     content: string;
 
-    @Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
-    created_at?: Date;
-
-    @Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP(6)" })
-    updated_at?: Date;
+    @UpdateDateColumn()
+    updated_at: Date;
 }

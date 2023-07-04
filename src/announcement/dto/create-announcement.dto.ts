@@ -13,9 +13,4 @@ export class CreateAnnouncementDto {
     @IsNotEmpty()
     @IsString()
     content: string;
-
-    created_at: Date;
-
-    updated_at: Date;
-
 }

@@ -1,9 +1,8 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Res } from '@nestjs/common';
 import { AnnouncementService } from './announcement.service';
-import { CreateAnnouncementDto } from './dto/create-announcement.dto';
-import { UpdateAnnouncementDto } from './dto/update-announcement.dto';
-import { Response } from 'express';
+import { CreateAnnouncementDto, UpdateAnnouncementDto } from './dto';
 import { FormDataRequest } from 'nestjs-form-data';
+import { Response } from 'express';
 
 @Controller('announcement')
 export class AnnouncementController {
@@ -16,12 +15,13 @@ export class AnnouncementController {
 
     return res.status(200).json({
       code: 200,
-      msg: 'Announcement ' + announcement.title + ' has been created successfully',
+      msg: `Announcement ${announcement.title} has been created successfully`,
+
     });
   }
 
   @Get()
-  async findAll(@Res() res: Response): Promise<Response> {
+  async findAll(@Res() res: Response) {
     const announcement = await this.announcementService.findAll();
 
     return res.status(200).json({
@@ -54,8 +54,9 @@ export class AnnouncementController {
   }
 
   @Patch(':uuid')
-  update(@Param('uuid') uuid: string, @Body() updateAnnouncementDto: UpdateAnnouncementDto) {
-    return this.announcementService.update(uuid, updateAnnouncementDto);
+  @FormDataRequest()
+  async update(@Param('uuid') uuid: string, @Body() updateAnnouncementDto: UpdateAnnouncementDto) {
+    return await this.announcementService.update(uuid, updateAnnouncementDto);
   }
 
   @Delete(':uuid')
