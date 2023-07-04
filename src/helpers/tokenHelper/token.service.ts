@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
+import { ALGORITHM, JWT_SECRET_KEY } from 'src/config';
 
 @Injectable()
 export class TokenHelper {
-    constructor(private config: ConfigService) { }
     encode(user_uuid: string, user_email: string, user_name: string): string {
-        const alg = 'HS256';
-        const key = this.config.get('JWT_SECRET_KEY')
         const payload = {
             user_uuid,
             user_name,
@@ -16,12 +14,10 @@ export class TokenHelper {
             expired_at: Math.floor(Date.now() / 1000) + (24 * 3600),
         };
 
-        return jwt.sign(payload, key, { algorithm: alg });
+        return jwt.sign(payload, JWT_SECRET_KEY, { algorithm: ALGORITHM });
     }
 
     decode(token: string): any {
-        const alg = 'HS256';
-        const key = this.config.get('JWT_SECRET_KEY')
-        return jwt.verify(token, key, { algorithms: [alg] });
+        return jwt.verify(token, JWT_SECRET_KEY, { algorithms: [ALGORITHM] });
     }
 }

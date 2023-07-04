@@ -2,9 +2,17 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    transform: true
+  }),
+  );
 
   app.useStaticAssets(join(__dirname, '..', 'public'), {
     prefix: '/public',
@@ -12,22 +20,13 @@ async function bootstrap() {
 
   await app.listen(8002);
 
-  // Route List
-  // const server = app.getHttpServer();
-  // const router = server._events.request._router;
-  // const availableRoutes: [] = router.stack
-  //   .map(layer => {
-  //     if (layer.route) {
-  //       return {
-  //         route: {
-  //           path: layer.route?.path,
-  //           method: layer.route?.stack[0].method,
-  //         },
-  //       };
-  //     }
-  //   })
-  //   .filter(item => item !== undefined);
+  const options = new DocumentBuilder()
+    .setTitle('API Documentation')
+    .setDescription('API documentation for your Nest.js application')
+    .setVersion('1.0')
+    .build();
 
-  // console.log(availableRoutes);
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('api', app, document);
 }
 bootstrap();

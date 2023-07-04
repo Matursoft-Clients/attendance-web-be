@@ -3,28 +3,8 @@ import { Response } from "express";
 import { SettingService } from './setting.service';
 import { AuthMiddleware } from 'src/middleware/auth.middleware';
 import { UpdateSettingDto } from './dto';
-import { diskStorage } from 'multer';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { extname } from 'path';
-
-const allowedFileExtensions = ['.jpg', '.jpeg', '.png'];
-
-const fileFilter = (req, file, cb) => {
-  const fileExt = extname(file.originalname).toLowerCase();
-
-  if (allowedFileExtensions.includes(fileExt)) {
-    cb(null, true); // Terima file
-  } else {
-    // Tolak file dengan error jika ekstensi tidak diizinkan
-    cb(
-      new HttpException(
-        `File type ${fileExt} is not allowed.`,
-        HttpStatus.BAD_REQUEST,
-      ),
-      false,
-    );
-  }
-};
+import { FormDataRequest } from 'nestjs-form-data';
 
 @Controller('setting')
 export class SettingController {
@@ -45,21 +25,14 @@ export class SettingController {
   }
 
   @UseGuards(AuthMiddleware)
+  @FormDataRequest()
+  @UseInterceptors(FileInterceptor('file'))
   @Post(':uuid')
-  @UseInterceptors(
-    FileInterceptor('office_logo', {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (req, file, cb) => {
-          const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-          const extension = extname(file.originalname);
-          cb(null, `${uniqueSuffix}${extension}`);
-        },
-      }),
-      fileFilter: fileFilter,
-    }),
-  )
   async update(@Param('uuid') uuid: string, @Body() updateSettingDto: UpdateSettingDto, @UploadedFile() officeLogo: Express.Multer.File, @Res() res: Response) {
+
+    console.log(updateSettingDto)
+    console.log(officeLogo)
+
     // Jika file logo kantor ada dalam request
     if (officeLogo) {
       // Mendapatkan path file dari officeLogo.path
@@ -77,4 +50,3 @@ export class SettingController {
     });
   }
 }
-

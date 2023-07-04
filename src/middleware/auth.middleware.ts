@@ -11,7 +11,7 @@ export class AuthMiddleware implements NestMiddleware {
 
         console.log(token)
         try {
-            const decodedToken = this.tokenHelper.decode(token);
+            const decodedToken: any = this.tokenHelper.decode(token);
             if (decodedToken.expired_at < Date.now()) {
                 return res.status(498).json({
                     code: 498,

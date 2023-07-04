@@ -3,6 +3,7 @@ import { AuthService } from "./auth.service";
 import { AuthDto } from "./dto";
 import { Request, Response } from "express";
 import { AuthMiddleware } from "src/middleware/auth.middleware";
+import { FormDataRequest } from "nestjs-form-data";
 
 @Controller('auth')
 
@@ -10,7 +11,11 @@ export class AuthController {
     constructor(private authService: AuthService) { }
 
     @Post('login')
+    @FormDataRequest()
     async login(@Body() dto: AuthDto, @Res() res: Response) {
+
+        console.log(dto)
+
         const token = await this.authService.login(dto);
 
         return res.status(200).json({

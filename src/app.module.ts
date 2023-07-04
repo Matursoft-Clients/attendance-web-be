@@ -6,6 +6,9 @@ import { TokenModule } from './helpers/tokenHelper/token.module';
 import { GetCurrentUserModule } from './helpers/getCurrentUserHelper/getCurrentUser.module';
 import { RequestContextModule } from 'nestjs-request-context';
 import { SettingModule } from './setting/setting.module';
+import { BannerModule } from './banner/banner.module';
+import { AnnouncementModule } from './announcement/announcement.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -18,6 +21,9 @@ import { SettingModule } from './setting/setting.module';
     GetCurrentUserModule,
     RequestContextModule,
     SettingModule,
+    BannerModule,
+    AnnouncementModule,
+    UserModule,
   ],
 })
 export class AppModule { }
