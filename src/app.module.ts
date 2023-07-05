@@ -12,6 +12,7 @@ import { UserModule } from './user/user.module';
 import { EmployeeModule } from './employee/employee.module';
 import { JobPositionModule } from './job-position/job-position.module';
 import { CustomAttendanceLocationModule } from './custom-attendance-location/custom-attendance-location.module';
+import { DailyAttendanceModule } from './daily-attendance/daily-attendance.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { CustomAttendanceLocationModule } from './custom-attendance-location/cus
     EmployeeModule,
     JobPositionModule,
     CustomAttendanceLocationModule,
+    DailyAttendanceModule,
   ],
 })
 export class AppModule { }
