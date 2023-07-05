@@ -11,6 +11,7 @@ import { AnnouncementModule } from './announcement/announcement.module';
 import { UserModule } from './user/user.module';
 import { EmployeeModule } from './employee/employee.module';
 import { JobPositionModule } from './job-position/job-position.module';
+import { CustomAttendanceLocationModule } from './custom-attendance-location/custom-attendance-location.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { JobPositionModule } from './job-position/job-position.module';
     UserModule,
     EmployeeModule,
     JobPositionModule,
+    CustomAttendanceLocationModule,
   ],
 })
 export class AppModule { }

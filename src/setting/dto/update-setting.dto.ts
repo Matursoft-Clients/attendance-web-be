@@ -1,4 +1,3 @@
-import { Transform } from "class-transformer";
 import { IsLatitude, IsLongitude, IsNotEmpty, IsNumberString, IsString, Matches } from "class-validator";
 import { FileSystemStoredFile, HasMimeType, IsFile, MaxFileSize } from "nestjs-form-data";
 
