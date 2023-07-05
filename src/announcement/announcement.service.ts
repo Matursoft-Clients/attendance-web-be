@@ -1,19 +1,19 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { UpdateAnnouncementDto } from './dto/update-announcement.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateAnnouncementDto, UpdateAnnouncementDto } from './dto';
+import { AnnouncementDTO } from './announcement.interface';
 import * as slug from 'slug';
 import * as randomstring from 'randomstring';
 import { v4 as uuidv4 } from 'uuid';
-import { CreateAnnouncementDto } from './dto/create-announcement.dto';
-import { AnnouncementDTO } from './announcement.interface';
 
 @Injectable()
 export class AnnouncementService {
   constructor(private prisma: PrismaService) { }
 
   async create(createAnnouncementDto: CreateAnnouncementDto) {
+
     try {
-      const announcementCreated = await this.prisma.aNNOUNCEMENTS.create({
+      return await this.prisma.aNNOUNCEMENTS.create({
         data: {
           uuid: uuidv4(),
           title: createAnnouncementDto.title,
@@ -24,7 +24,6 @@ export class AnnouncementService {
         },
       });
 
-      return announcementCreated;
     } catch (error) {
       throw new HttpException(
         {
@@ -45,17 +44,26 @@ export class AnnouncementService {
     });
   }
 
-  async findOne(uuid: string) {
+  async findOne(uuid: string): Promise<AnnouncementDTO> {
 
-    return await this.prisma.aNNOUNCEMENTS.findUnique({
-      where: {
-        uuid
-      }
-    })
+    return await this.prisma.aNNOUNCEMENTS.findUnique({ where: { uuid } })
   }
 
   async update(uuid: string, updateAnnouncementDto: UpdateAnnouncementDto) {
-    const announcementUpdate = await this.prisma.aNNOUNCEMENTS.update({
+
+    const announcement = await this.findOne(uuid);
+
+    if (!announcement) {
+      throw new HttpException(
+        {
+          code: HttpStatus.UNPROCESSABLE_ENTITY,
+          msg: 'Announcement failed to update!',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    return await this.prisma.aNNOUNCEMENTS.update({
       where: {
         uuid
       },
@@ -65,25 +73,26 @@ export class AnnouncementService {
         updated_at: new Date()
       }
     })
-
-    return announcementUpdate
   }
 
   async remove(uuid: string) {
-    try {
-      return await this.prisma.aNNOUNCEMENTS.delete({
-        where: {
-          uuid
-        }
-      })
-    } catch (error) {
+
+    const announcement = await this.findOne(uuid);
+
+    if (!announcement) {
       throw new HttpException(
         {
           code: HttpStatus.UNPROCESSABLE_ENTITY,
-          msg: 'Announcement not found!',
+          msg: 'Announcement failed to delete!',
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
+
+    return await this.prisma.aNNOUNCEMENTS.delete({
+      where: {
+        uuid
+      }
+    })
   }
 }

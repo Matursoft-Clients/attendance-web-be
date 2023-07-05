@@ -1,24 +1,28 @@
-import { FileTypeValidator, ParseFilePipe, UploadedFile } from "@nestjs/common";
-import { IsInt, IsLatitude, IsLongitude, IsNotEmpty, IsString, Matches } from "class-validator";
+import { Transform } from "class-transformer";
+import { IsLatitude, IsLongitude, IsNotEmpty, IsNumberString, IsString, Matches } from "class-validator";
+import { FileSystemStoredFile, HasMimeType, IsFile, MaxFileSize } from "nestjs-form-data";
 
 export class UpdateSettingDto {
     @IsNotEmpty()
     @IsString()
     office_name: string;
 
-    @IsNotEmpty()
-    office_logo: any;
+    @IsFile()
+    @MaxFileSize(1e6)
+    @HasMimeType(['image/jpeg', 'image/png', 'image/jpg'])
+    office_logo: FileSystemStoredFile;
 
     @IsNotEmpty()
-    presence_entry_start: Date;
+    @Matches(/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/, { message: 'presence_entry_start must use format hhhh:mm:ss' }) // Format 00:00:00
+    presence_entry_start: string;
 
     @IsNotEmpty()
-    @Matches(/^(1[0-2]|0?[1-9]):([0-5]?[0-9]):([0-5]?[0-9])$/, { message: 'presence_entry_end must use time format' }) // Format 00:00:00
-    presence_entry_end: Date;
+    @Matches(/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/, { message: 'presence_entry_end must use format hhhh:mm:ss' }) // Format 00:00:00
+    presence_entry_end: string;
 
     @IsNotEmpty()
-    @Matches(/^(1[0-2]|0?[1-9]):([0-5]?[0-9]):([0-5]?[0-9])$/, { message: 'presence_exit must use time format' }) // Format 00:00:00
-    presence_exit: Date;
+    @Matches(/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/, { message: 'presence_exit must use format hhhh:mm:ss' }) // Format 00:00:00
+    presence_exit: string;
 
     @IsNotEmpty()
     @IsString()
@@ -33,6 +37,6 @@ export class UpdateSettingDto {
     presence_location_longitude: number;
 
     @IsNotEmpty()
-    @IsInt()
+    @IsNumberString({}, { message: 'presence_meter_radius must be a number' })
     presence_meter_radius: number;
 }

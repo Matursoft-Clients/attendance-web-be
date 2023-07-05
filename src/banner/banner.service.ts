@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateBannerDto } from './dto/create-banner.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateBannerDto } from './dto';
 
 @Injectable()
 export class BannerService {

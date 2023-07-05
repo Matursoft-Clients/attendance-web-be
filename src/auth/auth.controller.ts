@@ -14,8 +14,6 @@ export class AuthController {
     @FormDataRequest()
     async login(@Body() dto: AuthDto, @Res() res: Response) {
 
-        console.log(dto)
-
         const token = await this.authService.login(dto);
 
         return res.status(200).json({

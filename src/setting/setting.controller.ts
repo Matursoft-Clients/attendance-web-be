@@ -4,9 +4,11 @@ import { SettingService } from './setting.service';
 import { AuthMiddleware } from 'src/middleware/auth.middleware';
 import { UpdateSettingDto } from './dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { FormDataRequest } from 'nestjs-form-data';
+import { FileSystemStoredFile, FormDataRequest } from 'nestjs-form-data';
+import { createWriteStream, unlink, rename, copyFile, copyFileSync } from 'fs';
+import { join } from 'path';
 
-@Controller('setting')
+@Controller('settings')
 export class SettingController {
   constructor(private readonly settingService: SettingService) { }
 
@@ -25,24 +27,52 @@ export class SettingController {
   }
 
   @UseGuards(AuthMiddleware)
-  @FormDataRequest()
-  @UseInterceptors(FileInterceptor('file'))
+  @FormDataRequest({ storage: FileSystemStoredFile })
+  // @UseInterceptors(FileInterceptor('office_logo'))
   @Post(':uuid')
-  async update(@Param('uuid') uuid: string, @Body() updateSettingDto: UpdateSettingDto, @UploadedFile() officeLogo: Express.Multer.File, @Res() res: Response) {
+  async update(@Param('uuid') uuid: string,
+    @Body() updateSettingDto: UpdateSettingDto,
+    // @UploadedFile() office_logo: Express.Multer.File,
+    @Res() res: Response) {
+    const office_logo: FileSystemStoredFile = updateSettingDto.office_logo
 
-    console.log(updateSettingDto)
-    console.log(officeLogo)
+    // Proses foto baru
+    if (office_logo) {
+      // Simpan foto baru di lokal
+      // const fileExtension = office_logo.originalName.split('.').pop();
+      // const fileName = `${uuid}.${fileExtension}`;
+      // const filePath = join(__dirname, '..', 'public', 'setting', 'office-logo', fileName);
+      // const fileStream = createWriteStream(filePath);
+      // console.log(filePath)
+      // fileStream.write(office_logo.path);
+      // fileStream.end();
 
-    // Jika file logo kantor ada dalam request
-    if (officeLogo) {
-      // Mendapatkan path file dari officeLogo.path
-      updateSettingDto.office_logo = officeLogo.path;
+      // copyFileSync(office_logo.path, filePath.replace('dist/', ''));
 
-      // Menghapus logo kantor lama jika ada
-      await this.settingService.deleteOldOfficeLogo(uuid);
+
+      // Hapus foto lama jika ada
+      // const user = await this.settingService.findByUuid(uuid);
+      // if (user && user.office_logo) {
+      //   // Hapus foto lama dari lokal
+      //   const oldFilePath = join(__dirname, '..', 'public', 'setting', 'office-logo', user.office_logo);
+      //   oldFilePath.replace('dist/', '')
+      //   unlink(oldFilePath, (err) => {
+      //     if (err) {
+      //       console.error('Gagal menghapus foto lama:', err);
+      //     } else {
+      //       console.log('Foto lama berhasil dihapus');
+      //     }
+      //   });
+      // }
     }
 
-    const setting = await this.settingService.update(uuid, updateSettingDto);
+
+    //   // Simpan informasi foto baru ke basis data
+    //   // user.office_logo = fileName;
+    //   // await this.settingService.save(user);
+    // }
+
+    await this.settingService.update(uuid, updateSettingDto);
     console.log(updateSettingDto)
     return res.status(200).json({
       code: 200,

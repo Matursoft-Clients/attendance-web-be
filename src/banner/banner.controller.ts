@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Body, Param, Delete, Res } from '@nestjs/common';
 import { BannerService } from './banner.service';
-import { CreateBannerDto } from './dto/create-banner.dto';
-import { Response } from 'express';
+import { CreateBannerDto } from './dto';
 import { FormDataRequest } from 'nestjs-form-data';
+import { Response } from 'express';
 
 @Controller('banner')
 export class BannerController {

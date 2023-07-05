@@ -10,6 +10,7 @@ import { BannerModule } from './banner/banner.module';
 import { AnnouncementModule } from './announcement/announcement.module';
 import { UserModule } from './user/user.module';
 import { EmployeeModule } from './employee/employee.module';
+import { JobPositionModule } from './job-position/job-position.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { EmployeeModule } from './employee/employee.module';
     AnnouncementModule,
     UserModule,
     EmployeeModule,
+    JobPositionModule,
   ],
 })
 export class AppModule { }

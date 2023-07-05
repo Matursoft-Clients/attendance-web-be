@@ -4,31 +4,31 @@ import { CreateAnnouncementDto, UpdateAnnouncementDto } from './dto';
 import { FormDataRequest } from 'nestjs-form-data';
 import { Response } from 'express';
 
-@Controller('announcement')
+@Controller('announcements')
 export class AnnouncementController {
   constructor(private readonly announcementService: AnnouncementService) { }
 
   @Post()
   @FormDataRequest()
   async create(@Body() createAnnouncementDto: CreateAnnouncementDto, @Res() res: Response) {
-    const announcement = await this.announcementService.create(createAnnouncementDto);
+    const CreateAnnouncement = await this.announcementService.create(createAnnouncementDto);
 
     return res.status(200).json({
       code: 200,
-      msg: `Announcement ${announcement.title} has been created successfully`,
+      msg: `Announcement ${CreateAnnouncement.title} has been created successfully`,
 
     });
   }
 
   @Get()
   async findAll(@Res() res: Response) {
-    const announcement = await this.announcementService.findAll();
+    const announcements = await this.announcementService.findAll();
 
     return res.status(200).json({
       code: 200,
       msg: 'Here is Your Announcements',
       data: {
-        announcement
+        announcements
       },
     });
   }
@@ -55,8 +55,16 @@ export class AnnouncementController {
 
   @Patch(':uuid')
   @FormDataRequest()
-  async update(@Param('uuid') uuid: string, @Body() updateAnnouncementDto: UpdateAnnouncementDto) {
-    return await this.announcementService.update(uuid, updateAnnouncementDto);
+  async update(@Param('uuid') uuid: string, @Body() updateAnnouncementDto: UpdateAnnouncementDto, @Res() res: Response) {
+    const updateAnnouncement = await this.announcementService.update(uuid, updateAnnouncementDto);
+
+    return res.status(200).json({
+      code: 200,
+      msg: 'Announcement has been updated successfully',
+      data: {
+        updateAnnouncement
+      },
+    });
   }
 
   @Delete(':uuid')

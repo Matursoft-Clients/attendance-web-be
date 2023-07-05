@@ -13,16 +13,28 @@ export class SettingService {
 
   async update(uuid: string, updateSettingDto: UpdateSettingDto) {
 
+    const entryTime = '21:21:00';
+    const [hours, minutes, seconds] = entryTime.split(':');
+
+
+    const presenceEntryStart = updateSettingDto.presence_entry_start;
+    // const [hours, minutes, seconds] = presenceEntryStart.split(':');
+
+    // const date = new Date();
+    // date.setHours(Number(hours));
+    // date.setMinutes(Number(minutes));
+    // date.setSeconds(Number(seconds));
+    // date.toLocaleString("en-US", { timeZone: "Asia/Jakarta" });
+    console.log('ok')
     const setting = await this.prisma.sETTINGS.update({
       where: {
         uuid
       },
       data: {
         office_name: updateSettingDto.office_name,
-        office_logo: updateSettingDto.office_logo,
-        presence_entry_start: updateSettingDto.presence_entry_start,
-        presence_entry_end: updateSettingDto.presence_entry_end,
-        presence_exit: updateSettingDto.presence_exit,
+        presence_entry_start: new Date(+10),
+        presence_entry_end: new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" }),
+        presence_exit: new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" }),
         presence_location_address: updateSettingDto.presence_location_address,
         presence_location_latitude: updateSettingDto.presence_location_latitude,
         presence_location_longitude: updateSettingDto.presence_location_longitude,
@@ -45,5 +57,13 @@ export class SettingService {
       // Hapus file logo kantor lama
       await unlink(setting.office_logo);
     }
+  }
+
+  async findByUuid(uuid: string) {
+    return await this.prisma.sETTINGS.findFirst({
+      where: {
+        uuid: uuid
+      }
+    });
   }
 }
