@@ -3,10 +3,11 @@ import { Response } from "express";
 import { SettingService } from './setting.service';
 import { AuthMiddleware } from 'src/middleware/auth.middleware';
 import { UpdateSettingDto } from './dto';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { FileSystemStoredFile, FormDataRequest } from 'nestjs-form-data';
-import { createWriteStream, unlink, rename, copyFile, copyFileSync } from 'fs';
+import { createWriteStream, unlink, copyFileSync } from 'fs';
 import { join } from 'path';
+import * as randomstring from 'randomstring';
+
 
 @Controller('settings')
 export class SettingController {
@@ -15,64 +16,60 @@ export class SettingController {
 
   @Get()
   async findAll(@Res() res: Response) {
-    const setting = await this.settingService.findAll();
+    const settings = await this.settingService.findAll();
 
     return res.status(200).json({
       code: 200,
-      msg: 'Here is Your Setting',
+      msg: 'Here is Your Settings',
       data: {
-        setting
+        settings
       },
     });
   }
 
   @UseGuards(AuthMiddleware)
   @FormDataRequest({ storage: FileSystemStoredFile })
-  // @UseInterceptors(FileInterceptor('office_logo'))
   @Post(':uuid')
-  async update(@Param('uuid') uuid: string,
-    @Body() updateSettingDto: UpdateSettingDto,
-    // @UploadedFile() office_logo: Express.Multer.File,
-    @Res() res: Response) {
+  async update(@Param('uuid') uuid: string, @Body() updateSettingDto: UpdateSettingDto, @Res() res: Response) {
     const office_logo: FileSystemStoredFile = updateSettingDto.office_logo
 
+    let fileName = ''
     // Proses foto baru
     if (office_logo) {
       // Simpan foto baru di lokal
-      // const fileExtension = office_logo.originalName.split('.').pop();
-      // const fileName = `${uuid}.${fileExtension}`;
-      // const filePath = join(__dirname, '..', 'public', 'setting', 'office-logo', fileName);
-      // const fileStream = createWriteStream(filePath);
-      // console.log(filePath)
-      // fileStream.write(office_logo.path);
-      // fileStream.end();
+      const fileExtension = office_logo.originalName.split('.').pop();
+      fileName = randomstring.generate(10) + '.' + fileExtension;
+      const filePath = join(__dirname, '..', 'public', 'setting', 'office-logo', fileName);
+      const fileStream = createWriteStream(filePath);
 
-      // copyFileSync(office_logo.path, filePath.replace('dist/', ''));
+      fileStream.write(office_logo.path);
+
+      fileStream.end();
+
+      copyFileSync(office_logo.path, filePath.replace('dist/', ''));
 
 
       // Hapus foto lama jika ada
-      // const user = await this.settingService.findByUuid(uuid);
-      // if (user && user.office_logo) {
-      //   // Hapus foto lama dari lokal
-      //   const oldFilePath = join(__dirname, '..', 'public', 'setting', 'office-logo', user.office_logo);
-      //   oldFilePath.replace('dist/', '')
-      //   unlink(oldFilePath, (err) => {
-      //     if (err) {
-      //       console.error('Gagal menghapus foto lama:', err);
-      //     } else {
-      //       console.log('Foto lama berhasil dihapus');
-      //     }
-      //   });
-      // }
+      const user = await this.settingService.findByUuid(uuid);
+      if (user && user.office_logo) {
+        // Hapus foto lama dari lokal
+        const oldFilePathInDist = join(__dirname, '..', 'public', 'setting', 'office-logo', user.office_logo);
+
+        const oldFilePath = oldFilePathInDist.replace('dist/', '')
+
+        unlink(oldFilePath, (err) => {
+          if (err) {
+            console.error('Gagal menghapus foto lama:', err);
+          } else {
+            console.log('Foto lama berhasil dihapus');
+          }
+        });
+      }
     }
 
+    const name_office_logo = fileName;
 
-    //   // Simpan informasi foto baru ke basis data
-    //   // user.office_logo = fileName;
-    //   // await this.settingService.save(user);
-    // }
-
-    await this.settingService.update(uuid, updateSettingDto);
+    await this.settingService.update(uuid, updateSettingDto, name_office_logo);
     console.log(updateSettingDto)
     return res.status(200).json({
       code: 200,

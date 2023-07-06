@@ -11,7 +11,7 @@ export class CustomAttendanceLocationController {
   @Post()
   @FormDataRequest()
   async create(@Body() createCustomAttendanceLocationDto: CreateCustomAttendanceLocationDto, @Res() res: Response) {
-    const createCustomAttendanceLocation = await this.customAttendanceLocationService.create(createCustomAttendanceLocationDto);
+    await this.customAttendanceLocationService.create(createCustomAttendanceLocationDto);
 
     return res.status(200).json({
       code: 200,
