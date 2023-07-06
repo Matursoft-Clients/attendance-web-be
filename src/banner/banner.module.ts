@@ -1,7 +1,8 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { BannerService } from './banner.service';
 import { BannerController } from './banner.controller';
 import { NestjsFormDataModule } from 'nestjs-form-data';
+import { AuthMiddleware } from 'src/middleware/auth.middleware';
 
 @Module({
   controllers: [BannerController],
@@ -10,4 +11,14 @@ import { NestjsFormDataModule } from 'nestjs-form-data';
     NestjsFormDataModule
   ]
 })
-export class BannerModule { }
+export class BannerModule implements NestModule {
+  public configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware)
+      .forRoutes(
+        { path: 'banners', method: RequestMethod.GET },
+        { path: 'banners', method: RequestMethod.POST },
+        { path: 'banners/:slug', method: RequestMethod.DELETE },
+      )
+  }
+}

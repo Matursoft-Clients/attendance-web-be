@@ -15,8 +15,12 @@ async function bootstrap() {
   }),
   );
 
-  app.useStaticAssets(join(__dirname, '..', 'public'), {
-    prefix: '/public',
+  const apa = join(__dirname, '..', 'src/public')
+
+  console.log(apa)
+
+  app.useStaticAssets(join(__dirname, '..', 'src/public'), {
+    prefix: '/src/public',
   });
 
   await app.listen(8002);

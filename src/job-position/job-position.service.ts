@@ -11,7 +11,7 @@ export class JobPositionService {
 
   async create(createJobPositionDto: CreateJobPositionDto) {
     try {
-      const createjobPosition = await this.prisma.jOB_POSITIONS.create({
+      const createJobPosition = await this.prisma.jOB_POSITIONS.create({
         data: {
           uuid: uuidv4(),
           name: createJobPositionDto.name,
@@ -21,7 +21,7 @@ export class JobPositionService {
         },
       });
 
-      return createjobPosition;
+      return createJobPosition;
     } catch (error) {
       throw new HttpException(
         {
@@ -38,7 +38,6 @@ export class JobPositionService {
   }
 
   async findOne(uuid: string) {
-
     return await this.prisma.jOB_POSITIONS.findUnique({ where: { uuid } })
   }
 
@@ -76,7 +75,7 @@ export class JobPositionService {
       throw new HttpException(
         {
           code: HttpStatus.UNPROCESSABLE_ENTITY,
-          msg: 'Job Position failed to delete!',
+          msg: 'Job Position failed to delete! Record not found.',
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );

@@ -1,34 +1,66 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateBannerDto } from './dto';
+import { v4 as uuidv4 } from 'uuid';
+import { BASE_URL } from 'src/config';
 
 @Injectable()
 export class BannerService {
+
   constructor(private prisma: PrismaService) { }
 
-  create(createBannerDto: CreateBannerDto) {
-    return 'This action adds a new banner';
-  }
-
-  findAll() {
-    return this.prisma.bANNERS.findMany()
-  }
-
-  async remove(uuid: string) {
+  async create(createBannerDto: CreateBannerDto, imageFileName: string) {
     try {
-      return await this.prisma.bANNERS.delete({
-        where: {
-          uuid
-        }
-      })
+      const createBanner = await this.prisma.bANNERS.create({
+        data: {
+          uuid: uuidv4(),
+          name: createBannerDto.name,
+          image: imageFileName,
+          created_at: new Date(),
+          updated_at: new Date()
+        },
+      });
+
+      return createBanner;
     } catch (error) {
       throw new HttpException(
         {
           code: HttpStatus.UNPROCESSABLE_ENTITY,
-          msg: 'Banner not found!',
+          msg: "Error! Please Contact Admin.",
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
+  }
+
+  async findAll() {
+    const banners = await this.prisma.bANNERS.findMany()
+
+    banners.map((e) => {
+      console.log(e)
+      e.image = BASE_URL + 'src/public/banner/image/' + e.image
+    })
+
+    return banners
+  }
+
+  async findOne(uuid: string) {
+    return await this.prisma.bANNERS.findUnique({ where: { uuid } })
+  }
+
+  async remove(uuid: string) {
+    const banner = await this.findOne(uuid);
+
+    if (!banner) {
+      throw new HttpException(
+        {
+          code: HttpStatus.UNPROCESSABLE_ENTITY,
+          msg: 'Banner failed to delete! Record not found.',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    return await this.prisma.bANNERS.delete({ where: { uuid } })
   }
 }

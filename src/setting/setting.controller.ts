@@ -27,7 +27,6 @@ export class SettingController {
     });
   }
 
-  @UseGuards(AuthMiddleware)
   @FormDataRequest({ storage: FileSystemStoredFile })
   @Post(':uuid')
   async update(@Param('uuid') uuid: string, @Body() updateSettingDto: UpdateSettingDto, @Res() res: Response) {
@@ -46,7 +45,7 @@ export class SettingController {
 
       fileStream.end();
 
-      copyFileSync(office_logo.path, filePath.replace('dist/', ''));
+      copyFileSync(office_logo.path, filePath.replace('dist/', 'src/'));
 
 
       // Hapus foto lama jika ada
@@ -55,7 +54,7 @@ export class SettingController {
         // Hapus foto lama dari lokal
         const oldFilePathInDist = join(__dirname, '..', 'public', 'setting', 'office-logo', user.office_logo);
 
-        const oldFilePath = oldFilePathInDist.replace('dist/', '')
+        const oldFilePath = oldFilePathInDist.replace('dist/', 'src/')
 
         unlink(oldFilePath, (err) => {
           if (err) {

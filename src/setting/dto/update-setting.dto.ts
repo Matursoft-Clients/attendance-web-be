@@ -1,5 +1,5 @@
 import { IsLatitude, IsLongitude, IsNotEmpty, IsNumberString, IsOptional, IsString, Matches, Validate } from "class-validator";
-import { FileSystemStoredFile, HasMimeType, IsFile, MaxFileSize } from "nestjs-form-data";
+import { FileSystemStoredFile } from "nestjs-form-data";
 
 // Custom validator untuk validasi file gambar
 function validateImageFile(value: any) {

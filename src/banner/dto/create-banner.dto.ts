@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsString } from "class-validator";
+import { FileSystemStoredFile, HasMimeType, IsFile, MaxFileSize } from "nestjs-form-data";
 
 export class CreateBannerDto {
 
@@ -6,6 +7,8 @@ export class CreateBannerDto {
     @IsString()
     name: string;
 
-    @IsNotEmpty()
-    image: any;
+    @IsFile()
+    @MaxFileSize(1e6)
+    @HasMimeType(['image/jpeg', 'image/png', 'image/jpg'])
+    image: FileSystemStoredFile;
 }
