@@ -15,10 +15,6 @@ async function bootstrap() {
   }),
   );
 
-  const apa = join(__dirname, '..', 'src/public')
-
-  console.log(apa)
-
   app.useStaticAssets(join(__dirname, '..', 'src/public'), {
     prefix: '/src/public',
   });

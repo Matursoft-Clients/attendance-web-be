@@ -102,10 +102,6 @@ export class EmployeeService {
       );
     }
 
-    // email baru sama dengan email yang ada tidak lolos
-    // email baru tidak sama dengan email lama tidak lolos
-    // email baru 
-
     // Cek duplicate Email
     const employee = await this.findEmployeeByEmail(updateEmployeeDto.email);
 
