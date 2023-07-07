@@ -1,25 +1,201 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateEmployeeDto, UpdateEmployeeDto } from './dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { v4 as uuidv4 } from 'uuid';
+import { BASE_URL } from 'src/config';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class EmployeeService {
-  create(createEmployeeDto: CreateEmployeeDto) {
-    return 'This action adds a new employee';
+
+  constructor(private prisma: PrismaService) { }
+
+  async create(createEmployeeDto: CreateEmployeeDto, photoFileName: string) {
+
+    // Cek duplicate Email
+    const employee = await this.findEmployeeByEmail(createEmployeeDto.email);
+
+
+    if (employee) {
+      throw new HttpException(
+        {
+          code: HttpStatus.UNPROCESSABLE_ENTITY,
+          msg: 'Employee failed to create! Email already in use.',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    // Cek Job Position is valid or not
+    const jobPosition = await this.findJobPositionByUuid(createEmployeeDto.job_position_uuid);
+
+
+    if (!jobPosition) {
+      throw new HttpException(
+        {
+          code: HttpStatus.UNPROCESSABLE_ENTITY,
+          msg: 'Employee failed to create! Job Position not found.',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    try {
+      const createEmployee = await this.prisma.eMPLOYEES.create({
+        data: {
+          uuid: uuidv4(),
+          name: createEmployeeDto.name,
+          job_position_uuid: createEmployeeDto.job_position_uuid,
+          email: createEmployeeDto.email,
+          password: await bcrypt.hash(createEmployeeDto.password, 10),
+          photo: photoFileName,
+          created_at: new Date(),
+          updated_at: new Date()
+        },
+      });
+
+      return createEmployee;
+    } catch (error) {
+      throw new HttpException(
+        {
+          code: HttpStatus.UNPROCESSABLE_ENTITY,
+          msg: "Error! Please Contact Admin.",
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
   }
 
-  findAll() {
-    return `This action returns all employee`;
+  async findAll() {
+    const employees = await this.prisma.eMPLOYEES.findMany()
+
+    employees.map((e) => {
+      console.log(e)
+      e.photo ? e.photo = BASE_URL + 'employee/photo/' + e.photo : null
+    })
+
+    return employees
   }
 
-  findOne(uuid: string) {
-    return `This action returns a #${uuid} employee`;
+  async findOne(uuid: string) {
+    return await this.prisma.eMPLOYEES.findUnique({ where: { uuid } })
   }
 
-  update(uuid: string, updateEmployeeDto: UpdateEmployeeDto) {
-    return `This action updates a #${uuid} employee`;
+  async findEmployeeByEmail(email: string) {
+    return await this.prisma.eMPLOYEES.findUnique({ where: { email } })
   }
 
-  remove(uuid: string) {
-    return `This action removes a #${uuid} employee`;
+  async findJobPositionByUuid(uuid: string) {
+    return await this.prisma.jOB_POSITIONS.findUnique({ where: { uuid } })
+  }
+
+  async update(uuid: string, updateEmployeeDto: UpdateEmployeeDto) {
+    const employeeInUpdate = await this.findOne(uuid);
+
+    if (!employeeInUpdate) {
+      throw new HttpException(
+        {
+          code: HttpStatus.UNPROCESSABLE_ENTITY,
+          msg: 'Employee failed to update! Record not found.',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    // email baru sama dengan email yang ada tidak lolos
+    // email baru tidak sama dengan email lama tidak lolos
+    // email baru 
+
+    // Cek duplicate Email
+    const employee = await this.findEmployeeByEmail(updateEmployeeDto.email);
+
+    if (employee) {
+      if (updateEmployeeDto.email == employee.email && employeeInUpdate.email !== updateEmployeeDto.email) {
+        throw new HttpException(
+          {
+            code: HttpStatus.UNPROCESSABLE_ENTITY,
+            msg: 'Employee failed to update! Email already in use.',
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+    }
+
+
+    // Cek Job Position is valid or not
+    const jobPosition = await this.findJobPositionByUuid(updateEmployeeDto.job_position_uuid);
+
+    if (!jobPosition) {
+      throw new HttpException(
+        {
+          code: HttpStatus.UNPROCESSABLE_ENTITY,
+          msg: 'Employee failed to update! Job Position not found.',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    console.log(employeeInUpdate)
+    console.log(updateEmployeeDto.password)
+
+    try {
+      const updateEmployee = await this.prisma.eMPLOYEES.update({
+        where: { uuid },
+        data: {
+          name: updateEmployeeDto.name,
+          job_position_uuid: updateEmployeeDto.job_position_uuid,
+          email: updateEmployeeDto.email,
+          password: updateEmployeeDto.password ? await bcrypt.hash(updateEmployeeDto.password, 10) : employeeInUpdate.password,
+          updated_at: new Date()
+        },
+      });
+
+      return updateEmployee;
+    } catch (error) {
+      console.log(error)
+      throw new HttpException(
+        {
+          code: HttpStatus.UNPROCESSABLE_ENTITY,
+          msg: "Error! Please Contact Admin.",
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+  }
+
+  async updateEmployeePhoto(uuid: string, photoFileName: string) {
+    try {
+      await this.prisma.eMPLOYEES.update({
+        where: { uuid },
+        data: {
+          photo: photoFileName,
+        },
+      });
+    } catch (error) {
+      console.log(error)
+      throw new HttpException(
+        {
+          code: HttpStatus.UNPROCESSABLE_ENTITY,
+          msg: "Error! Please Contact Admin.",
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+  }
+
+  async remove(uuid: string) {
+    const employee = await this.findOne(uuid);
+
+    if (!employee) {
+      throw new HttpException(
+        {
+          code: HttpStatus.UNPROCESSABLE_ENTITY,
+          msg: 'Employee failed to delete! Record not found.',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    return await this.prisma.eMPLOYEES.delete({ where: { uuid } })
   }
 }

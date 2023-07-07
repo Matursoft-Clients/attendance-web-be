@@ -2,23 +2,19 @@ import { IsLatitude, IsLongitude, IsNotEmpty, IsNumberString, IsOptional, IsStri
 import { FileSystemStoredFile } from "nestjs-form-data";
 
 // Custom validator untuk validasi file gambar
-function validateImageFile(value: any) {
+function validateImageFile(value: FileSystemStoredFile) {
     if (!value) {
-        // Jika value kosong, dianggap valid karena field boleh kosong
         return true;
     }
 
-    // Validasi ukuran file dan ekstensi file
     const validExtensions = ['image/jpeg', 'image/png', 'image/jpg'];
     const maxFileSize = 1e6; // 1MB
 
     if (!validExtensions.includes(value.mimetype)) {
-        // File memiliki ekstensi yang tidak valid
         return false;
     }
 
     if (value.size > maxFileSize) {
-        // File memiliki ukuran yang melebihi batas maksimal
         return false;
     }
 

@@ -6,6 +6,7 @@ import { Response } from 'express';
 import { join } from 'path';
 import { copyFileSync, createWriteStream, unlink } from 'fs';
 import * as randomstring from 'randomstring';
+import { FILE_PATH } from 'src/config';
 
 @Controller('banners')
 export class BannerController {
@@ -18,16 +19,17 @@ export class BannerController {
 
     const fileExtension = image.originalName.split('.').pop();
     const fileName = randomstring.generate(10) + '.' + fileExtension;
-    const filePath = join(__dirname, '..', 'public', 'banner', 'image', fileName);
+    const filePathDist = join(__dirname, fileName);
+    const filePath = join(FILE_PATH, 'banner', 'image', fileName);
 
-    console.log(filePath)
+    console.log(filePathDist)
 
-    const fileStream = createWriteStream(filePath);
+    const fileStream = createWriteStream(filePathDist);
 
     fileStream.write(image.path);
     fileStream.end();
 
-    copyFileSync(image.path, filePath.replace('dist/', 'src/'));
+    copyFileSync(image.path, filePath);
 
     const createdBanner = await this.bannerService.create(createBannerDto, fileName);
 
@@ -55,9 +57,7 @@ export class BannerController {
     const banner = await this.bannerService.remove(uuid);
 
     // Delete image
-    const oldFilePathInDist = join(__dirname, '..', 'public', 'banner', 'image', banner.image);
-
-    const oldFilePath = oldFilePathInDist.replace('dist/', 'src/')
+    const oldFilePath = join(FILE_PATH, 'banner', 'image', banner.image);
 
     unlink(oldFilePath, (err) => {
       if (err) {

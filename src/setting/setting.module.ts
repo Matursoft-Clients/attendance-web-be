@@ -17,7 +17,7 @@ export class SettingModule implements NestModule {
       .apply(AuthMiddleware)
       .forRoutes(
         { path: 'settings', method: RequestMethod.GET },
-        { path: 'settings/:uuid', method: RequestMethod.POST },
+        { path: 'settings/:uuid', method: RequestMethod.PATCH },
       )
   }
 }

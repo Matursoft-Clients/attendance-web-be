@@ -38,7 +38,7 @@ export class BannerService {
 
     banners.map((e) => {
       console.log(e)
-      e.image = BASE_URL + 'src/public/banner/image/' + e.image
+      e.image = BASE_URL + 'banner/image/' + e.image
     })
 
     return banners
