@@ -24,15 +24,7 @@ export class UserController {
       const fileExtension = photo.originalName.split('.').pop();
       const fileName = randomstring.generate(10) + '.' + fileExtension;
 
-      const filePathInDisk = join(__dirname, fileName);
-      const filePath = join(FILE_PATH, 'user', 'photo', fileName);
-
-
-      const fileStream = createWriteStream(filePathInDisk);
-
-      fileStream.write(photo.path);
-
-      fileStream.end();
+      const filePath = join(FILE_PATH, 'user', fileName);
 
       copyFileSync(photo.path, filePath);
 
@@ -41,7 +33,7 @@ export class UserController {
 
       if (user && user.photo) {
         // Hapus foto lama dari lokal
-        const oldFilePath = join(FILE_PATH, 'user', 'photo', user.photo);
+        const oldFilePath = join(FILE_PATH, 'user', user.photo);
 
         unlink(oldFilePath, (err) => {
           if (err) {

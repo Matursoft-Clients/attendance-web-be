@@ -15,9 +15,18 @@ async function bootstrap() {
   }),
   );
 
-  app.useStaticAssets(join(__dirname, '..', 'src/public'), {
-    prefix: '/src/public',
+  app.useStaticAssets(join(__dirname), {
+    prefix: '/',
   });
+
+  const optionsCors = {
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+    credentials: true
+  };
+  app.enableCors(optionsCors);
 
   await app.listen(8002);
 

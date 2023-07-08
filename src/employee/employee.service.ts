@@ -71,7 +71,7 @@ export class EmployeeService {
 
     employees.map((e) => {
       console.log(e)
-      e.photo ? e.photo = BASE_URL + 'employee/photo/' + e.photo : null
+      e.photo ? e.photo = BASE_URL + 'employee/' + e.photo : null
     })
 
     return employees

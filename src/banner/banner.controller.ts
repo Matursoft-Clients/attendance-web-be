@@ -19,15 +19,7 @@ export class BannerController {
 
     const fileExtension = image.originalName.split('.').pop();
     const fileName = randomstring.generate(10) + '.' + fileExtension;
-    const filePathDist = join(__dirname, fileName);
-    const filePath = join(FILE_PATH, 'banner', 'image', fileName);
-
-    console.log(filePathDist)
-
-    const fileStream = createWriteStream(filePathDist);
-
-    fileStream.write(image.path);
-    fileStream.end();
+    const filePath = join(FILE_PATH, 'banner', fileName);
 
     copyFileSync(image.path, filePath);
 
@@ -57,7 +49,7 @@ export class BannerController {
     const banner = await this.bannerService.remove(uuid);
 
     // Delete image
-    const oldFilePath = join(FILE_PATH, 'banner', 'image', banner.image);
+    const oldFilePath = join(FILE_PATH, 'banner', banner.image);
 
     unlink(oldFilePath, (err) => {
       if (err) {

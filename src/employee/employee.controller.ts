@@ -24,16 +24,9 @@ export class EmployeeController {
     // Make random file name
     const fileName = randomstring.generate(10) + '.' + fileExtension;
 
-    // File path to dist
-    const filePathDist = join(__dirname, fileName);
-
     // File path to public directory
-    const filePath = join(FILE_PATH, 'employee', 'photo', fileName);
-    const fileStream = createWriteStream(filePathDist);
+    const filePath = join(FILE_PATH, 'employee', fileName);
 
-    // Save file to directory dist, temporary
-    fileStream.write(photo.path);
-    fileStream.end();
 
     // Copy file to directory public
     copyFileSync(photo.path, filePath);
@@ -72,7 +65,7 @@ export class EmployeeController {
       const fileName = randomstring.generate(10) + '.' + fileExtension;
 
       const filePathInDisk = join(__dirname, fileName);
-      const filePath = join(FILE_PATH, 'employee', 'photo', fileName);
+      const filePath = join(FILE_PATH, 'employee', fileName);
 
 
       const fileStream = createWriteStream(filePathInDisk);
@@ -88,7 +81,7 @@ export class EmployeeController {
 
       if (employee && employee.photo) {
         // Hapus foto lama dari lokal
-        const oldFilePath = join(FILE_PATH, 'employee', 'photo', employee.photo);
+        const oldFilePath = join(FILE_PATH, 'employee', employee.photo);
 
         unlink(oldFilePath, (err) => {
           if (err) {
@@ -115,7 +108,7 @@ export class EmployeeController {
     const employee = await this.employeeService.remove(uuid);
 
     // Delete image
-    const oldFilePath = join(FILE_PATH, 'employee', 'photo', employee.photo);
+    const oldFilePath = join(FILE_PATH, 'employee', employee.photo);
 
 
     unlink(oldFilePath, (err) => {

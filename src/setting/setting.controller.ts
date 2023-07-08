@@ -40,15 +40,7 @@ export class SettingController {
       const fileExtension = office_logo.originalName.split('.').pop();
       const fileName = randomstring.generate(10) + '.' + fileExtension;
 
-      const filePathInDisk = join(__dirname, fileName);
-      const filePath = join(FILE_PATH, 'setting', 'office-logo', fileName);
-
-
-      const fileStream = createWriteStream(filePathInDisk);
-
-      fileStream.write(office_logo.path);
-
-      fileStream.end();
+      const filePath = join(FILE_PATH, 'setting', fileName);
 
       copyFileSync(office_logo.path, filePath);
 
@@ -57,7 +49,7 @@ export class SettingController {
       const setting = await this.settingService.findOne(uuid);
       if (setting && setting.office_logo) {
         // Hapus foto lama dari lokal
-        const oldFilePath = join(FILE_PATH, 'setting', 'office-logo', setting.office_logo);
+        const oldFilePath = join(FILE_PATH, 'setting', setting.office_logo);
 
         unlink(oldFilePath, (err) => {
           if (err) {

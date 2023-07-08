@@ -11,7 +11,7 @@ export class SettingService {
     const setting = await this.prisma.sETTINGS.findFirst()
 
     // Update office logo with full url
-    setting['office_logo'] = setting['office_logo'] ? BASE_URL + 'setting/office-logo/' + setting['office_logo'] : null
+    setting['office_logo'] = setting['office_logo'] ? BASE_URL + 'setting/' + setting['office_logo'] : null
 
     return setting
   }
