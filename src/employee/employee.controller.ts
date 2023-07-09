@@ -94,6 +94,42 @@ export class EmployeeController {
 
   }
 
+  @Post(':uuid')
+  @FormDataRequest({ storage: FileSystemStoredFile })
+  async updateEmployeePhoto(@Param('uuid') uuid: string, @Body() photo: FileSystemStoredFile, @Res() res: Response) {
+
+    let fileName = ''
+    // Proses foto baru
+    if (photo) {
+      // Simpan foto baru di lokal
+      const fileExtension = photo.originalName.split('.').pop();
+      fileName = randomstring.generate(10) + '.' + fileExtension;
+
+      const filePath = join(FILE_PATH, 'employee', fileName);
+
+      copyFileSync(photo.path, filePath);
+
+      // Hapus foto lama jika ada
+      const employee = await this.employeeService.findOne(uuid);
+
+      if (employee && employee.photo) {
+        // Hapus foto lama dari lokal
+        const oldFilePath = join(FILE_PATH, 'employee', employee.photo);
+
+        unlink(oldFilePath, (err) => {
+          if (err) {
+            console.error('Gagal menghapus foto lama:', err);
+          } else {
+            console.log('Foto lama berhasil dihapus');
+          }
+        });
+      }
+      // Update coloumn employee photo
+      await this.employeeService.updateEmployeePhoto(uuid, fileName);
+    }
+    return fileName
+  }
+
   @Delete(':uuid')
   async remove(@Param('uuid') uuid: string, @Res() res: Response) {
     const employee = await this.employeeService.remove(uuid);
