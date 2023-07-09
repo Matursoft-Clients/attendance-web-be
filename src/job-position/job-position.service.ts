@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import * as randomstring from 'randomstring';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateJobPositionDto, UpdateJobPositionDto } from './dto';
@@ -15,7 +14,7 @@ export class JobPositionService {
         data: {
           uuid: uuidv4(),
           name: createJobPositionDto.name,
-          code: randomstring.generate(10),
+          code: createJobPositionDto.code,
           created_at: new Date(),
           updated_at: new Date()
         },
@@ -41,6 +40,10 @@ export class JobPositionService {
     return await this.prisma.jOB_POSITIONS.findUnique({ where: { uuid } })
   }
 
+  async findJobPositionInEmployee(job_position_uuid: string) {
+    return await this.prisma.eMPLOYEES.findFirst({ where: { job_position_uuid } })
+  }
+
   async update(uuid: string, updateJobPositionDto: UpdateJobPositionDto) {
 
     const jobPosition = await this.findOne(uuid);
@@ -61,6 +64,7 @@ export class JobPositionService {
       },
       data: {
         name: updateJobPositionDto.name,
+        code: updateJobPositionDto.code,
         updated_at: new Date()
       }
     })
@@ -76,6 +80,18 @@ export class JobPositionService {
         {
           code: HttpStatus.UNPROCESSABLE_ENTITY,
           msg: 'Job Position failed to delete! Record not found.',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    const jobPositionInEmployee = await this.findJobPositionInEmployee(uuid)
+
+    if (jobPositionInEmployee) {
+      throw new HttpException(
+        {
+          code: HttpStatus.UNPROCESSABLE_ENTITY,
+          msg: 'Job Position failed to delete! Record use in Employee.',
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );

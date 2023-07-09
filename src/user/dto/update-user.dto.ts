@@ -7,6 +7,10 @@ export class PasswordMatchConstraint implements ValidatorConstraintInterface {
         const password = (args.object as any).password; // Mendapatkan nilai dari properti "password" di DTO
         const confirmPassword = value;
 
+        console.log(password)
+
+        console.log(confirmPassword)
+
         if (!password && !confirmPassword) {
             return true;
         }

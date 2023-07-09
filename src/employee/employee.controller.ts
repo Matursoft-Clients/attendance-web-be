@@ -64,15 +64,7 @@ export class EmployeeController {
       const fileExtension = photo.originalName.split('.').pop();
       const fileName = randomstring.generate(10) + '.' + fileExtension;
 
-      const filePathInDisk = join(__dirname, fileName);
       const filePath = join(FILE_PATH, 'employee', fileName);
-
-
-      const fileStream = createWriteStream(filePathInDisk);
-
-      fileStream.write(photo.path);
-
-      fileStream.end();
 
       copyFileSync(photo.path, filePath);
 
@@ -91,7 +83,6 @@ export class EmployeeController {
           }
         });
       }
-
       // Update coloumn employee photo
       await this.employeeService.updateEmployeePhoto(uuid, fileName);
     }

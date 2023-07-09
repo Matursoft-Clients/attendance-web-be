@@ -2,10 +2,12 @@ import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength, Validate, Validat
 import { FileSystemStoredFile } from 'nestjs-form-data';
 
 @ValidatorConstraint({ name: 'passwordMatch', async: false })
-export class PasswordMatchConstraint implements ValidatorConstraintInterface {
+export class UpdatePasswordMatchConstraint implements ValidatorConstraintInterface {
     validate(value: string, args: ValidationArguments) {
         const password = (args.object as any).password; // Mendapatkan nilai dari properti "password" di DTO
         const confirmPassword = value;
+
+        console.log(confirmPassword)
 
         if (!password && !confirmPassword) {
             return true;
@@ -26,7 +28,7 @@ function ValidatePasswordConfirmation(validationOptions?: ValidationOptions) {
             target: object.constructor,
             propertyName: propertyName,
             options: validationOptions,
-            validator: PasswordMatchConstraint,
+            validator: UpdatePasswordMatchConstraint,
         });
     };
 }

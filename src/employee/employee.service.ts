@@ -92,6 +92,8 @@ export class EmployeeService {
   async update(uuid: string, updateEmployeeDto: UpdateEmployeeDto) {
     const employeeInUpdate = await this.findOne(uuid);
 
+    console.log(updateEmployeeDto.password_confirmation)
+
     if (!employeeInUpdate) {
       throw new HttpException(
         {
@@ -130,9 +132,6 @@ export class EmployeeService {
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
-
-    console.log(employeeInUpdate)
-    console.log(updateEmployeeDto.password)
 
     try {
       const updateEmployee = await this.prisma.eMPLOYEES.update({

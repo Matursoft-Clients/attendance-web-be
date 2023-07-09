@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { FileSystemStoredFile, FormDataRequest } from 'nestjs-form-data';
 import { join } from 'path';
 import { FILE_PATH } from 'src/config';
-import { copyFileSync, createWriteStream, unlink } from 'fs';
+import { copyFileSync, unlink } from 'fs';
 import * as randomstring from 'randomstring';
 import { Response } from 'express';
 

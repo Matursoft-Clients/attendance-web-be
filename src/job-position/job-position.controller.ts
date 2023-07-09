@@ -41,10 +41,7 @@ export class JobPositionController {
 
     return res.status(200).json({
       code: 200,
-      msg: 'Job Position has been updated successfully',
-      data: {
-        updatedJobPosition
-      },
+      msg: `Job Position ${updatedJobPosition.name} has been updated successfully`,
     });
   }
 

@@ -1,8 +1,7 @@
-import { Body, Controller, Get, Post, Req, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Post, Req, Res } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthDto } from "./dto";
 import { Request, Response } from "express";
-import { AuthMiddleware } from "src/middleware/auth.middleware";
 import { FormDataRequest } from "nestjs-form-data";
 
 @Controller('auth')
@@ -25,7 +24,6 @@ export class AuthController {
         });
     }
 
-    @UseGuards(AuthMiddleware)
     @Get('user')
     async getCurrentUser(@Req() req: Request, @Res() res: Response) {
         // Get Current User
