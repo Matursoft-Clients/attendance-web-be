@@ -92,8 +92,6 @@ export class EmployeeService {
   async update(uuid: string, updateEmployeeDto: UpdateEmployeeDto) {
     const employeeInUpdate = await this.findOne(uuid);
 
-    console.log(updateEmployeeDto.password_confirmation)
-
     if (!employeeInUpdate) {
       throw new HttpException(
         {
@@ -102,6 +100,18 @@ export class EmployeeService {
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
+    }
+
+    if (updateEmployeeDto.password) {
+      if (!('password_confirmation' in updateEmployeeDto)) {
+        throw new HttpException(
+          {
+            code: HttpStatus.UNPROCESSABLE_ENTITY,
+            msg: 'Password confirmation is required.',
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
     }
 
     // Cek duplicate Email

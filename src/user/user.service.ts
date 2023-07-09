@@ -29,6 +29,18 @@ export class UserService {
       );
     }
 
+    if (updateUserDto.password) {
+      if (!('password_confirmation' in updateUserDto)) {
+        throw new HttpException(
+          {
+            code: HttpStatus.UNPROCESSABLE_ENTITY,
+            msg: 'Password confirmation is required.',
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+    }
+
     // Cek duplicate Email
     const user = await this.findUserByEmail(updateUserDto.email);
 
