@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateEmployeeDto, UpdateEmployeeDto } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
-import { BASE_URL } from 'src/config';
+import { WEB_URL } from 'src/config';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -71,7 +71,7 @@ export class EmployeeService {
 
     employees.map((e) => {
       console.log(e)
-      e.photo ? e.photo = BASE_URL + 'employee/' + e.photo : null
+      e.photo ? e.photo = WEB_URL + 'employee/' + e.photo : null
     })
 
     return employees

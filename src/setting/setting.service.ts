@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateSettingDto } from './dto';
-import { BASE_URL } from 'src/config';
+import { WEB_URL } from 'src/config';
 
 @Injectable()
 export class SettingService {
@@ -11,7 +11,7 @@ export class SettingService {
     const setting = await this.prisma.sETTINGS.findFirst()
 
     // Update office logo with full url
-    setting['office_logo'] = setting['office_logo'] ? BASE_URL + 'setting/' + setting['office_logo'] : null
+    setting['office_logo'] = setting['office_logo'] ? WEB_URL + 'setting/' + setting['office_logo'] : null
 
     return setting
   }

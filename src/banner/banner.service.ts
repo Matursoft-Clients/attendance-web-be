@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateBannerDto } from './dto';
 import { v4 as uuidv4 } from 'uuid';
-import { BASE_URL } from 'src/config';
+import { WEB_URL } from 'src/config';
 
 @Injectable()
 export class BannerService {
@@ -38,7 +38,7 @@ export class BannerService {
 
     banners.map((e) => {
       console.log(e)
-      e.image = BASE_URL + 'banner/' + e.image
+      e.image = WEB_URL + 'banner/' + e.image
     })
 
     return banners
