@@ -1,10 +1,10 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Res } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
-import { CreateEmployeeDto, UpdateEmployeeDto } from './dto';
+import { CreateEmployeeDto, UpdateEmployeeDto, UpdateEmployeePhotoDto } from './dto';
 import { FileSystemStoredFile, FormDataRequest } from 'nestjs-form-data';
 import * as randomstring from 'randomstring';
 import { join } from 'path';
-import { copyFileSync, createWriteStream, unlink } from 'fs';
+import { copyFileSync, unlink } from 'fs';
 import { Response } from 'express';
 import { FILE_PATH } from 'src/config';
 
@@ -96,36 +96,29 @@ export class EmployeeController {
 
   @Post(':uuid')
   @FormDataRequest({ storage: FileSystemStoredFile })
-  async updateEmployeePhoto(@Param('uuid') uuid: string, @Body() photo: FileSystemStoredFile, @Res() res: Response) {
+  async updateEmployeePhoto(@Param('uuid') uuid: string, @Body() updateEmployeePhotoDTO: UpdateEmployeePhotoDto) {
+    const photo: FileSystemStoredFile = updateEmployeePhotoDTO.photo
 
-    let fileName = ''
-    // Proses foto baru
-    if (photo) {
-      // Simpan foto baru di lokal
-      const fileExtension = photo.originalName.split('.').pop();
-      fileName = randomstring.generate(10) + '.' + fileExtension;
+    const fileExtension = photo.originalName.split('.').pop();
+    const fileName = randomstring.generate(10) + '.' + fileExtension;
 
-      const filePath = join(FILE_PATH, 'employee', fileName);
+    const filePath = join(FILE_PATH, 'employee', fileName);
 
-      copyFileSync(photo.path, filePath);
+    copyFileSync(photo.path, filePath);
 
-      // Hapus foto lama jika ada
-      const employee = await this.employeeService.findOne(uuid);
+    const employee = await this.employeeService.findOne(uuid);
 
-      if (employee && employee.photo) {
-        // Hapus foto lama dari lokal
-        const oldFilePath = join(FILE_PATH, 'employee', employee.photo);
+    if (employee && employee.photo) {
+      // Hapus foto lama dari lokal
+      const oldFilePath = join(FILE_PATH, 'employee', employee.photo);
 
-        unlink(oldFilePath, (err) => {
-          if (err) {
-            console.error('Gagal menghapus foto lama:', err);
-          } else {
-            console.log('Foto lama berhasil dihapus');
-          }
-        });
-      }
-      // Update coloumn employee photo
-      await this.employeeService.updateEmployeePhoto(uuid, fileName);
+      unlink(oldFilePath, (err) => {
+        if (err) {
+          console.error('Gagal menghapus foto lama:', err);
+        } else {
+          console.log('Foto lama berhasil dihapus');
+        }
+      });
     }
     return fileName
   }
