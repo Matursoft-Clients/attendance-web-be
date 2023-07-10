@@ -22,6 +22,7 @@ const employee_module_1 = require("./employee/employee.module");
 const job_position_module_1 = require("./job-position/job-position.module");
 const custom_attendance_location_module_1 = require("./custom-attendance-location/custom-attendance-location.module");
 const daily_attendance_module_1 = require("./daily-attendance/daily-attendance.module");
+const calendar_module_1 = require("./calendar/calendar.module");
 let AppModule = exports.AppModule = class AppModule {
 };
 exports.AppModule = AppModule = __decorate([
@@ -43,6 +44,7 @@ exports.AppModule = AppModule = __decorate([
             job_position_module_1.JobPositionModule,
             custom_attendance_location_module_1.CustomAttendanceLocationModule,
             daily_attendance_module_1.DailyAttendanceModule,
+            calendar_module_1.CalendarModule,
         ],
     })
 ], AppModule);

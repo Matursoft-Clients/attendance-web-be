@@ -18,4 +18,3 @@ export class UserModule implements NestModule {
       )
   }
 }
-
