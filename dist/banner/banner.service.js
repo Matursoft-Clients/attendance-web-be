@@ -41,7 +41,6 @@ let BannerService = exports.BannerService = class BannerService {
     async findAll() {
         const banners = await this.prisma.bANNERS.findMany();
         banners.map((e) => {
-            console.log(e);
             e.image = config_1.WEB_URL + 'banner/' + e.image;
         });
         return banners;

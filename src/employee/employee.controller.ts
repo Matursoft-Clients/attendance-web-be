@@ -112,13 +112,13 @@ export class EmployeeController {
       // Hapus foto lama dari lokal
       const oldFilePath = join(FILE_PATH, 'employee', employee.photo);
 
-      unlink(oldFilePath, (err) => {
-        if (err) {
-          console.error('Gagal menghapus foto lama:', err);
-        } else {
-          console.log('Foto lama berhasil dihapus');
-        }
-      });
+      // unlink(oldFilePath, (err) => {
+      //   if (err) {
+      //     console.error('Gagal menghapus foto lama:', err);
+      //   } else {
+      //     console.log('Foto lama berhasil dihapus');
+      //   }
+      // });
     }
     return fileName
   }

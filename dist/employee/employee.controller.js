@@ -83,14 +83,6 @@ let EmployeeController = exports.EmployeeController = class EmployeeController {
         const employee = await this.employeeService.findOne(uuid);
         if (employee && employee.photo) {
             const oldFilePath = (0, path_1.join)(config_1.FILE_PATH, 'employee', employee.photo);
-            (0, fs_1.unlink)(oldFilePath, (err) => {
-                if (err) {
-                    console.error('Gagal menghapus foto lama:', err);
-                }
-                else {
-                    console.log('Foto lama berhasil dihapus');
-                }
-            });
         }
         return fileName;
     }
