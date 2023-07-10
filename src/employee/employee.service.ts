@@ -70,7 +70,7 @@ export class EmployeeService {
     const employees = await this.prisma.eMPLOYEES.findMany()
 
     employees.map((e) => {
-      console.log(e)
+      delete e.password
       e.photo ? e.photo = WEB_URL + 'employee/' + e.photo : null
     })
 

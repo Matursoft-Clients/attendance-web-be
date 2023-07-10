@@ -59,7 +59,7 @@ let EmployeeService = exports.EmployeeService = class EmployeeService {
     async findAll() {
         const employees = await this.prisma.eMPLOYEES.findMany();
         employees.map((e) => {
-            console.log(e);
+            delete e.password;
             e.photo ? e.photo = config_1.WEB_URL + 'employee/' + e.photo : null;
         });
         return employees;
