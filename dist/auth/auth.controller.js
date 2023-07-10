@@ -33,7 +33,6 @@ let AuthController = exports.AuthController = class AuthController {
     }
     async getCurrentUser(req, res) {
         const user = await this.authService.getCurrentUser(req);
-        delete user["password"];
         return res.status(200).json({
             code: 200,
             msg: 'Here is the User',

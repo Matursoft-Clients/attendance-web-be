@@ -50,6 +50,7 @@ let AuthService = exports.AuthService = class AuthService {
             return user;
         }
         catch (error) {
+            console.log(error);
             throw new common_1.HttpException({
                 code: common_1.HttpStatus.UNAUTHORIZED,
                 msg: 'Invalid Token',

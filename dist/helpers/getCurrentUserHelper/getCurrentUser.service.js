@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetCurrentUserHelper = void 0;
 const common_1 = require("@nestjs/common");
 const token_service_1 = require("../tokenHelper/token.service");
+const config_1 = require("../../config");
 let GetCurrentUserHelper = exports.GetCurrentUserHelper = class GetCurrentUserHelper {
     constructor(tokenHelper) {
         this.tokenHelper = tokenHelper;
@@ -25,6 +26,8 @@ let GetCurrentUserHelper = exports.GetCurrentUserHelper = class GetCurrentUserHe
                     uuid: user_uuid
                 }
             });
+            delete user["password"];
+            user["photo"] = user['photo'] ? config_1.WEB_URL + 'user/' + user['photo'] : null;
             return user;
         }
         catch (error) {

@@ -3,6 +3,7 @@ import { AuthService } from "./auth.service";
 import { AuthDto } from "./dto";
 import { Request, Response } from "express";
 import { FormDataRequest } from "nestjs-form-data";
+import { WEB_URL } from "src/config";
 
 @Controller('auth')
 
@@ -28,7 +29,6 @@ export class AuthController {
     async getCurrentUser(@Req() req: Request, @Res() res: Response) {
         // Get Current User
         const user = await this.authService.getCurrentUser(req);
-        delete user["password"];
 
         return res.status(200).json({
             code: 200,
