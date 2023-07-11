@@ -13,7 +13,7 @@ export class CalendarModule implements NestModule {
     consumer
       .apply(AuthMiddleware)
       .forRoutes(
-        { path: 'calendar/:uuid', method: RequestMethod.PATCH },
+        { path: 'calendar', method: RequestMethod.PATCH },
       )
   }
 }
