@@ -16,17 +16,53 @@ let DailyAttendanceService = exports.DailyAttendanceService = class DailyAttenda
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async findAll() {
-        let dailyAttendancesExtendEmployee = [];
-        const dailyAttendances = await this.prisma.dAILY_ATTENDANCES.findMany();
-        for (let i = 0; i < dailyAttendances.length; i++) {
-            dailyAttendancesExtendEmployee[i] = dailyAttendances[i];
-            dailyAttendancesExtendEmployee[i].employee = await this.findEmployeeByUuid(dailyAttendances[i].employee_uuid);
+    async findAll(status, start_date, end_date) {
+        console.log(start_date);
+        try {
+            let dailyAttendances = [];
+            if (status === 'today') {
+                dailyAttendances = await this.prisma.$queryRaw `SELECT *
+        FROM
+          DAILY_ATTENDANCES
+        WHERE DATE_FORMAT(DAILY_ATTENDANCES.date, '%Y-%m-%d') = CURDATE()`;
+            }
+            if (status === 'date_range') {
+                if (!start_date || !end_date) {
+                    throw new common_1.HttpException({
+                        code: common_1.HttpStatus.UNPROCESSABLE_ENTITY,
+                        msg: 'Param start date and end date is required!',
+                    }, common_1.HttpStatus.UNPROCESSABLE_ENTITY);
+                }
+                if (start_date > end_date) {
+                    throw new common_1.HttpException({
+                        code: common_1.HttpStatus.UNPROCESSABLE_ENTITY,
+                        msg: 'Param start date must be lower date of end date!',
+                    }, common_1.HttpStatus.UNPROCESSABLE_ENTITY);
+                }
+                dailyAttendances = await this.prisma.$queryRaw `SELECT *
+        FROM
+          DAILY_ATTENDANCES
+        WHERE DATE_FORMAT(DAILY_ATTENDANCES.date, '%Y-%m-%d') BETWEEN ${start_date} AND ${end_date}`;
+            }
+            let dailyAttendancesExtendEmployee = [];
+            for (let i = 0; i < dailyAttendances.length; i++) {
+                dailyAttendancesExtendEmployee[i] = dailyAttendances[i];
+                dailyAttendancesExtendEmployee[i].employee = await this.findEmployeeByUuid(dailyAttendances[i].employee_uuid);
+            }
+            return dailyAttendancesExtendEmployee;
         }
-        return dailyAttendancesExtendEmployee;
+        catch (err) {
+            throw new common_1.HttpException({
+                code: common_1.HttpStatus.UNPROCESSABLE_ENTITY,
+                msg: err,
+            }, common_1.HttpStatus.UNPROCESSABLE_ENTITY);
+        }
     }
     async findEmployeeByUuid(uuid) {
-        return await this.prisma.eMPLOYEES.findFirst({ where: { uuid } });
+        const employee = await this.prisma.eMPLOYEES.findFirst({ where: { uuid } });
+        delete employee['password'];
+        delete employee['token'];
+        return employee;
     }
 };
 exports.DailyAttendanceService = DailyAttendanceService = __decorate([

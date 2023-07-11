@@ -15,12 +15,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DailyAttendanceController = void 0;
 const common_1 = require("@nestjs/common");
 const daily_attendance_service_1 = require("./daily-attendance.service");
+const dto_1 = require("./dto");
 let DailyAttendanceController = exports.DailyAttendanceController = class DailyAttendanceController {
     constructor(dailyAttendanceService) {
         this.dailyAttendanceService = dailyAttendanceService;
     }
-    async findAll(res) {
-        const dailyAttendances = await this.dailyAttendanceService.findAll();
+    async findAll({ status, start_date, end_date }, res) {
+        const dailyAttendances = await this.dailyAttendanceService.findAll(status, start_date, end_date);
         return res.status(200).json({
             code: 200,
             msg: 'Daily attendances',
@@ -32,9 +33,10 @@ let DailyAttendanceController = exports.DailyAttendanceController = class DailyA
 };
 __decorate([
     (0, common_1.Get)(),
-    __param(0, (0, common_1.Res)()),
+    __param(0, (0, common_1.Query)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [dto_1.ParamDailyAttendanceDto, Object]),
     __metadata("design:returntype", Promise)
 ], DailyAttendanceController.prototype, "findAll", null);
 exports.DailyAttendanceController = DailyAttendanceController = __decorate([

@@ -2,7 +2,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export declare class DailyAttendanceService {
     private prisma;
     constructor(prisma: PrismaService);
-    findAll(): Promise<any[]>;
+    findAll(status: string, start_date: string, end_date: string): Promise<any[]>;
     findEmployeeByUuid(uuid: string): Promise<import("@prisma/client/runtime").GetResult<{
         uuid: string;
         job_position_uuid: string;
