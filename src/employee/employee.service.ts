@@ -71,6 +71,7 @@ export class EmployeeService {
 
     employees.map((e) => {
       delete e.password
+      delete e.token
       e.photo ? e.photo = WEB_URL + 'employee/' + e.photo : null
     })
 
