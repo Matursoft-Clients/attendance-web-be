@@ -3,7 +3,6 @@ import { AuthService } from "./auth.service";
 import { AuthDto } from "./dto";
 import { Request, Response } from "express";
 import { FormDataRequest } from "nestjs-form-data";
-import { WEB_URL } from "src/config";
 
 @Controller('auth')
 

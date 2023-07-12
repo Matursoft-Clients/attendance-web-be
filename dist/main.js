@@ -14,6 +14,7 @@ async function bootstrap() {
     app.useStaticAssets((0, path_1.join)(__dirname), {
         prefix: '/',
     });
+    console.log(__dirname);
     const optionsCors = {
         origin: "*",
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",

@@ -18,6 +18,8 @@ async function bootstrap() {
     prefix: '/',
   });
 
+  console.log(__dirname)
+
   const optionsCors = {
     origin: "*",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",

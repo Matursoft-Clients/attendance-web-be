@@ -34,7 +34,7 @@ let BannerController = exports.BannerController = class BannerController {
         const createdBanner = await this.bannerService.create(createBannerDto, fileName);
         return res.status(200).json({
             code: 200,
-            msg: `Job Position ${createdBanner.name} has been created successfully`,
+            msg: `Banner ${createdBanner.name} has been created successfully`,
         });
     }
     async findAll(res) {

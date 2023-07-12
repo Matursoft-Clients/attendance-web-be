@@ -4,7 +4,7 @@ import { CreateBannerDto } from './dto';
 import { FileSystemStoredFile, FormDataRequest } from 'nestjs-form-data';
 import { Response } from 'express';
 import { join } from 'path';
-import { copyFileSync, createWriteStream, unlink } from 'fs';
+import { copyFileSync, unlink } from 'fs';
 import * as randomstring from 'randomstring';
 import { FILE_PATH } from 'src/config';
 
@@ -27,7 +27,7 @@ export class BannerController {
 
     return res.status(200).json({
       code: 200,
-      msg: `Job Position ${createdBanner.name} has been created successfully`,
+      msg: `Banner ${createdBanner.name} has been created successfully`,
     });
   }
 

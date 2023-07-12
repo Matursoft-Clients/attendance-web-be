@@ -5,7 +5,6 @@ import * as bcrypt from 'bcrypt';
 import { TokenHelper } from "src/helpers/tokenHelper/token.service";
 import { GetCurrentUserHelper } from "src/helpers/getCurrentUserHelper/getCurrentUser.service";
 import { Request } from "express";
-import { WEB_URL } from "src/config";
 
 @Injectable()
 export class AuthService {
