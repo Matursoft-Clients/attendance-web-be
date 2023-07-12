@@ -11,10 +11,9 @@ async function bootstrap() {
         whitelist: true,
         transform: true
     }));
-    app.useStaticAssets((0, path_1.join)(__dirname), {
-        prefix: '/',
+    app.useStaticAssets((0, path_1.join)(__dirname, '..', 'storage'), {
+        prefix: '/storage',
     });
-    console.log(__dirname);
     const optionsCors = {
         origin: "*",
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",

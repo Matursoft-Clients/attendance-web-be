@@ -14,11 +14,9 @@ async function bootstrap() {
   }),
   );
 
-  app.useStaticAssets(join(__dirname), {
-    prefix: '/',
+  app.useStaticAssets(join(__dirname, '..', 'storage'), {
+    prefix: '/storage',
   });
-
-  console.log(__dirname)
 
   const optionsCors = {
     origin: "*",
