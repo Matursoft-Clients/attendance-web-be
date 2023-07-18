@@ -47,10 +47,10 @@ export class UpdateSettingDto {
     presence_meter_radius: number;
 
     @IsNotEmpty()
-    @IsLatitude()
+    @IsString()
     mobile_app_version: string;
 
     @IsNotEmpty()
-    @IsLongitude()
+    @IsString()
     play_store_url: string;
 }
