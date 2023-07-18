@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateEmployeeDto, UpdateEmployeeDto } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
-import { WEB_URL } from 'src/config';
+import { FILE_URL } from 'src/config';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -26,6 +26,19 @@ export class EmployeeService {
       );
     }
 
+    // Cek Branch is valid or not
+    const branch = await this.findBranchByUuid(createEmployeeDto.branch_uuid);
+
+    if (!branch) {
+      throw new HttpException(
+        {
+          code: HttpStatus.UNPROCESSABLE_ENTITY,
+          msg: 'Employee failed to create! Branch not found.',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
     // Cek Job Position is valid or not
     const jobPosition = await this.findJobPositionByUuid(createEmployeeDto.job_position_uuid);
 
@@ -44,17 +57,21 @@ export class EmployeeService {
       const createEmployee = await this.prisma.eMPLOYEES.create({
         data: {
           uuid: uuidv4(),
+          nik: createEmployeeDto.nik,
           name: createEmployeeDto.name,
+          branch_uuid: createEmployeeDto.branch_uuid,
           job_position_uuid: createEmployeeDto.job_position_uuid,
           email: createEmployeeDto.email,
+          whatsapp_number: createEmployeeDto.whatsapp_number,
           password: await bcrypt.hash(createEmployeeDto.password, 10),
           photo: photoFileName,
           created_at: new Date(),
           updated_at: new Date()
-        },
+        }
       });
 
       return createEmployee;
+
     } catch (error) {
       throw new HttpException(
         {
@@ -72,7 +89,7 @@ export class EmployeeService {
     employees.map((e) => {
       delete e.password
       delete e.token
-      e.photo ? e.photo = WEB_URL + 'employee/' + e.photo : null
+      e.photo ? e.photo = FILE_URL + 'employee/' + e.photo : null
     })
 
     return employees
@@ -84,6 +101,10 @@ export class EmployeeService {
 
   async findEmployeeByEmail(email: string) {
     return await this.prisma.eMPLOYEES.findUnique({ where: { email } })
+  }
+
+  async findBranchByUuid(uuid: string) {
+    return await this.prisma.bRANCHES.findUnique({ where: { uuid } })
   }
 
   async findJobPositionByUuid(uuid: string) {
@@ -130,6 +151,18 @@ export class EmployeeService {
       }
     }
 
+    // Cek Branch is valid or not
+    const branch = await this.findBranchByUuid(updateEmployeeDto.branch_uuid);
+
+    if (!branch) {
+      throw new HttpException(
+        {
+          code: HttpStatus.UNPROCESSABLE_ENTITY,
+          msg: 'Employee failed to create! Branch not found.',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
 
     // Cek Job Position is valid or not
     const jobPosition = await this.findJobPositionByUuid(updateEmployeeDto.job_position_uuid);
@@ -149,14 +182,17 @@ export class EmployeeService {
         where: { uuid },
         data: {
           name: updateEmployeeDto.name,
+          branch_uuid: updateEmployeeDto.branch_uuid,
           job_position_uuid: updateEmployeeDto.job_position_uuid,
           email: updateEmployeeDto.email,
+          whatsapp_number: updateEmployeeDto.whatsapp_number,
           password: updateEmployeeDto.password ? await bcrypt.hash(updateEmployeeDto.password, 10) : employeeInUpdate.password,
           updated_at: new Date()
         },
       });
 
       return updateEmployee;
+
     } catch (error) {
       console.log(error)
       throw new HttpException(

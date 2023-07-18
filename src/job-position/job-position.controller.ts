@@ -51,7 +51,7 @@ export class JobPositionController {
 
     return res.status(200).json({
       code: 200,
-      msg: 'Job Position ' + jobPosition.name + ' has been Deleted'
+      msg: `Job Position ${jobPosition.name} has been deleted`
     })
   }
 }

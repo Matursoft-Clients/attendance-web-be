@@ -3,7 +3,7 @@ import { Response } from "express";
 import { SettingService } from './setting.service';
 import { UpdateSettingDto } from './dto';
 import { FileSystemStoredFile, FormDataRequest } from 'nestjs-form-data';
-import { createWriteStream, unlink, copyFileSync } from 'fs';
+import { unlink, copyFileSync } from 'fs';
 import { join } from 'path';
 import * as randomstring from 'randomstring';
 import { FILE_PATH } from 'src/config';

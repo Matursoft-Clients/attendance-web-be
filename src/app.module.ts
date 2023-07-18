@@ -14,6 +14,7 @@ import { JobPositionModule } from './job-position/job-position.module';
 import { CustomAttendanceLocationModule } from './custom-attendance-location/custom-attendance-location.module';
 import { DailyAttendanceModule } from './daily-attendance/daily-attendance.module';
 import { CalendarModule } from './calendar/calendar.module';
+import { BranchModule } from './branch/branch.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { CalendarModule } from './calendar/calendar.module';
     CustomAttendanceLocationModule,
     DailyAttendanceModule,
     CalendarModule,
+    BranchModule,
   ],
 })
 export class AppModule { }

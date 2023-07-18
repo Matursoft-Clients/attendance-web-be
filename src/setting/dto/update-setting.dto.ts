@@ -43,18 +43,14 @@ export class UpdateSettingDto {
     presence_exit: string;
 
     @IsNotEmpty()
-    @IsString()
-    presence_location_address: string;
+    @IsNumberString({}, { message: 'presence_meter_radius must be a number' })
+    presence_meter_radius: number;
 
     @IsNotEmpty()
     @IsLatitude()
-    presence_location_latitude: number;
+    mobile_app_version: string;
 
     @IsNotEmpty()
     @IsLongitude()
-    presence_location_longitude: number;
-
-    @IsNotEmpty()
-    @IsNumberString({}, { message: 'presence_meter_radius must be a number' })
-    presence_meter_radius: number;
+    play_store_url: string;
 }

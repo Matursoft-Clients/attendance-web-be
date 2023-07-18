@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { TokenHelper } from "../tokenHelper/token.service";
-import { WEB_URL } from "src/config";
+import { FILE_URL } from "src/config";
 
 @Injectable()
 export class GetCurrentUserHelper {
@@ -17,7 +17,7 @@ export class GetCurrentUserHelper {
             });
 
             delete user["password"];
-            user["photo"] = user['photo'] ? WEB_URL + 'user/' + user['photo'] : null
+            user["photo"] = user['photo'] ? FILE_URL + 'user/' + user['photo'] : null
 
             return user;
         } catch (error) {

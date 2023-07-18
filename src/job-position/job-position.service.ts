@@ -33,7 +33,7 @@ export class JobPositionService {
   }
 
   async findAll() {
-    return await this.prisma.jOB_POSITIONS.findMany()
+    return await this.prisma.jOB_POSITIONS.findMany({ orderBy: [{ name: 'asc' }] })
   }
 
   async findOne(uuid: string) {
@@ -52,7 +52,7 @@ export class JobPositionService {
       throw new HttpException(
         {
           code: HttpStatus.UNPROCESSABLE_ENTITY,
-          msg: 'Job Position failed to update!',
+          msg: 'Job Position failed to update! Record not found.',
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
@@ -68,7 +68,6 @@ export class JobPositionService {
         updated_at: new Date()
       }
     })
-
   }
 
   async remove(uuid: string) {
@@ -101,5 +100,4 @@ export class JobPositionService {
       where: { uuid }
     })
   }
-
 }

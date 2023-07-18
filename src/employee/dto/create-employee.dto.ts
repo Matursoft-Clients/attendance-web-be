@@ -1,4 +1,5 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength, ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface, registerDecorator } from "class-validator";
+import { Transform } from "class-transformer";
+import { IsEmail, IsNotEmpty, IsPhoneNumber, IsString, Length, Matches, MinLength, ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface, registerDecorator } from "class-validator";
 import { FileSystemStoredFile, HasMimeType, IsFile, MaxFileSize } from "nestjs-form-data";
 
 @ValidatorConstraint({ name: 'passwordMatch', async: false })
@@ -34,7 +35,16 @@ function ValidatePasswordConfirmation(validationOptions?: ValidationOptions) {
 export class CreateEmployeeDto {
     @IsNotEmpty()
     @IsString()
+    @Length(16, 16, { message: `NIK must be equals to 16 digits.` })
+    nik: string;
+
+    @IsNotEmpty()
+    @IsString()
     name: string;
+
+    @IsNotEmpty()
+    @IsString()
+    branch_uuid: string;
 
     @IsNotEmpty()
     @IsString()
@@ -45,6 +55,10 @@ export class CreateEmployeeDto {
     @IsEmail()
     email: string;
 
+    @IsNotEmpty({ message: 'Whatsapp number is required' })
+    @Matches(/^\+62\d+$/, { message: 'Whatsapp number must start with "+62"' })
+    @IsPhoneNumber('ID', { message: 'Invalid whatsapp number format' })
+    whatsapp_number: string;
 
     @IsNotEmpty()
     @IsString()

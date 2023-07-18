@@ -11,6 +11,7 @@ model ANNOUNCEMENTS {
   uuid       String    @id @db.Char(36)
   title      String    @db.VarChar(100)
   slug       String    @unique(map: "announcements_slug_unique") @db.VarChar(150)
+  thumbnail  String    @db.VarChar(255)
   content    String    @db.Text
   created_at DateTime? @db.Timestamp(0)
   updated_at DateTime? @db.Timestamp(0)
@@ -22,6 +23,18 @@ model BANNERS {
   image      String    @db.VarChar(255)
   created_at DateTime? @db.Timestamp(0)
   updated_at DateTime? @db.Timestamp(0)
+}
+
+model BRANCHES {
+  uuid                        String      @id @db.Char(36)
+  name                        String      @db.VarChar(255)
+  code                        String      @db.VarChar(255)
+  presence_location_address   String      @db.Text
+  presence_location_latitude  Float
+  presence_location_longitude Float
+  created_at                  DateTime?   @db.Timestamp(0)
+  updated_at                  DateTime?   @db.Timestamp(0)
+  EMPLOYEES                   EMPLOYEES[]
 }
 
 model CUSTOM_ATTENDANCE_LOCATIONS {
@@ -44,7 +57,9 @@ model DAILY_ATTENDANCES {
   employee_uuid            String                                   @db.Char(36)
   date                     DateTime                                 @db.DateTime(0)
   presence_entry_status    DAILY_ATTENDANCES_presence_entry_status?
+  presence_entry_hour      String?                                  @db.VarChar(255)
   presence_exit_status     DAILY_ATTENDANCES_presence_exit_status?
+  presence_exit_hour       String?                                  @db.VarChar(255)
   presence_entry_address   String                                   @db.Text
   presence_entry_latitude  Float
   presence_entry_longitude Float
@@ -63,9 +78,12 @@ model DAILY_ATTENDANCES {
 
 model EMPLOYEES {
   uuid                        String                        @id @db.Char(36)
+  branch_uuid                 String                        @db.Char(36)
   job_position_uuid           String                        @db.Char(36)
+  nik                         String                        @db.VarChar(16)
   name                        String                        @db.VarChar(60)
   email                       String                        @unique(map: "employees_email_unique") @db.VarChar(60)
+  whatsapp_number             String                        @db.VarChar(14)
   password                    String                        @db.VarChar(255)
   photo                       String?                       @db.VarChar(255)
   token                       String?                       @db.LongText
@@ -73,8 +91,10 @@ model EMPLOYEES {
   updated_at                  DateTime?                     @db.Timestamp(0)
   CUSTOM_ATTENDANCE_LOCATIONS CUSTOM_ATTENDANCE_LOCATIONS[]
   DAILY_ATTENDANCES           DAILY_ATTENDANCES[]
+  BRANCHES                    BRANCHES                      @relation(fields: [branch_uuid], references: [uuid], onUpdate: Restrict, map: "employees_branch_uuid_foreign")
   JOB_POSITIONS               JOB_POSITIONS                 @relation(fields: [job_position_uuid], references: [uuid], onUpdate: Restrict, map: "employees_job_position_uuid_foreign")
 
+  @@index([branch_uuid], map: "employees_branch_uuid_foreign")
   @@index([job_position_uuid], map: "employees_job_position_uuid_foreign")
 }
 
@@ -88,18 +108,17 @@ model JOB_POSITIONS {
 }
 
 model SETTINGS {
-  uuid                        String    @id @db.Char(36)
-  office_name                 String    @db.VarChar(60)
-  office_logo                 String?   @db.VarChar(255)
-  presence_entry_start        String    @db.VarChar(255)
-  presence_entry_end          String    @db.VarChar(255)
-  presence_exit               String    @db.VarChar(255)
-  presence_location_address   String    @db.Text
-  presence_location_latitude  Float
-  presence_location_longitude Float
-  presence_meter_radius       Int
-  created_at                  DateTime? @db.Timestamp(0)
-  updated_at                  DateTime? @db.Timestamp(0)
+  uuid                  String    @id @db.Char(36)
+  office_name           String    @db.VarChar(60)
+  office_logo           String?   @db.VarChar(255)
+  presence_entry_start  String    @db.VarChar(255)
+  presence_entry_end    String    @db.VarChar(255)
+  presence_exit         String    @db.VarChar(255)
+  presence_meter_radius Int
+  mobile_app_version    String    @db.VarChar(255)
+  play_store_url        String    @db.VarChar(255)
+  created_at            DateTime? @db.Timestamp(0)
+  updated_at            DateTime? @db.Timestamp(0)
 }
 
 model USERS {
