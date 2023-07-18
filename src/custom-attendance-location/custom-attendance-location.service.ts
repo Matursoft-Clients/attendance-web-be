@@ -61,7 +61,6 @@ export class CustomAttendanceLocationService {
 
       delete customAttendanceLocationsExtendEmployee[i].employee['password'];
 
-      customAttendanceLocationsExtendEmployee[i].employee['photo'] = 'apa';
     }
 
     return customAttendanceLocationsExtendEmployee

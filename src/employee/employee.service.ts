@@ -92,7 +92,17 @@ export class EmployeeService {
       e.photo ? e.photo = FILE_URL + 'employee/' + e.photo : null
     })
 
-    return employees
+    let extendedEmployees = []
+    for (let i = 0; i < employees.length; i++) {
+      extendedEmployees[i] = employees[i];
+      delete extendedEmployees[i].password;
+      delete extendedEmployees[i].token;
+      extendedEmployees[i].photo ? (extendedEmployees[i].photo = FILE_URL + 'employee/' + extendedEmployees[i].photo) : null;
+      extendedEmployees[i].branch = await this.findBranchByUuid(extendedEmployees[i].branch_uuid);
+      extendedEmployees[i].job_position = await this.findJobPositionByUuid(extendedEmployees[i].job_position_uuid);
+    }
+
+    return extendedEmployees
   }
 
   async findOne(uuid: string) {
@@ -181,6 +191,7 @@ export class EmployeeService {
       const updateEmployee = await this.prisma.eMPLOYEES.update({
         where: { uuid },
         data: {
+          nik: updateEmployeeDto.nik,
           name: updateEmployeeDto.name,
           branch_uuid: updateEmployeeDto.branch_uuid,
           job_position_uuid: updateEmployeeDto.job_position_uuid,
@@ -238,6 +249,11 @@ export class EmployeeService {
       );
     }
 
-    return await this.prisma.eMPLOYEES.delete({ where: { uuid } })
+    try {
+      return await this.prisma.eMPLOYEES.delete({ where: { uuid } })
+
+    } catch (error) {
+      console.log(error)
+    }
   }
 }

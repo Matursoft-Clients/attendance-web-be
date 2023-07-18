@@ -106,20 +106,6 @@ export class EmployeeController {
 
     copyFileSync(photo.path, filePath);
 
-    const employee = await this.employeeService.findOne(uuid);
-
-    if (employee && employee.photo) {
-      // Hapus foto lama dari lokal
-      const oldFilePath = join(FILE_PATH, 'employee', employee.photo);
-
-      // unlink(oldFilePath, (err) => {
-      //   if (err) {
-      //     console.error('Gagal menghapus foto lama:', err);
-      //   } else {
-      //     console.log('Foto lama berhasil dihapus');
-      //   }
-      // });
-    }
     return fileName
   }
 
@@ -127,17 +113,21 @@ export class EmployeeController {
   async remove(@Param('uuid') uuid: string, @Res() res: Response) {
     const employee = await this.employeeService.remove(uuid);
 
-    // Delete image
-    const oldFilePath = join(FILE_PATH, 'employee', employee.photo);
+    try {
+      // Delete image
+      const oldFilePath = join(FILE_PATH, 'employee', employee.photo);
 
 
-    unlink(oldFilePath, (err) => {
-      if (err) {
-        console.error('Gagal menghapus foto lama:', err);
-      } else {
-        console.log('Foto lama berhasil dihapus');
-      }
-    });
+      unlink(oldFilePath, (err) => {
+        if (err) {
+          console.error('Gagal menghapus foto lama:', err);
+        } else {
+          console.log('Foto lama berhasil dihapus');
+        }
+      });
+    } catch (err) {
+      // Do nothing
+    }
 
     return res.status(200).json({
       code: 200,

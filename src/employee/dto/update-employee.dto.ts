@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, Matches, MinLength, Validate, ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface, registerDecorator } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, Length, Matches, MinLength, Validate, ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface, registerDecorator } from 'class-validator';
 import { FileSystemStoredFile } from 'nestjs-form-data';
 
 @ValidatorConstraint({ name: 'passwordMatch', async: false })
@@ -34,6 +34,11 @@ function ValidatePasswordConfirmation(validationOptions?: ValidationOptions) {
 }
 
 export class UpdateEmployeeDto {
+    @IsNotEmpty()
+    @IsString()
+    @Length(16, 16)
+    nik: string;
+
     @IsNotEmpty()
     @IsString()
     name: string;
