@@ -48,7 +48,11 @@ export class AnnouncementService {
 
   async findOne(uuid: string) {
 
-    return await this.prisma.aNNOUNCEMENTS.findUnique({ where: { uuid } })
+    const announcement = await this.prisma.aNNOUNCEMENTS.findUnique({ where: { uuid } })
+
+    announcement.thumbnail = FILE_URL + 'announcement/' + announcement.thumbnail
+
+    return announcement
   }
 
   async update(uuid: string, updateAnnouncementDto: UpdateAnnouncementDto) {
