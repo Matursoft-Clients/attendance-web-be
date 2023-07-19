@@ -86,12 +86,6 @@ export class EmployeeService {
   async findAll() {
     const employees = await this.prisma.eMPLOYEES.findMany()
 
-    employees.map((e) => {
-      delete e.password
-      delete e.token
-      e.photo ? e.photo = FILE_URL + 'employee/' + e.photo : null
-    })
-
     let extendedEmployees = []
     for (let i = 0; i < employees.length; i++) {
       extendedEmployees[i] = employees[i];

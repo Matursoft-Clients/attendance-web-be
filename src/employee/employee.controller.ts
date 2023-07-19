@@ -43,6 +43,8 @@ export class EmployeeController {
   async findAll(@Res() res: Response) {
     const employees = await this.employeeService.findAll();
 
+    console.log(employees)
+
     return res.status(200).json({
       code: 200,
       msg: 'Here is Your Employees',
