@@ -6,10 +6,7 @@ export class DailyAttendanceService {
 
   constructor(private prisma: PrismaService) { }
 
-
   async findAll(status: string, start_date: string, end_date: string) {
-
-    console.log(start_date)
 
     try {
       let dailyAttendances = []
