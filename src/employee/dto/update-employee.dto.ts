@@ -41,6 +41,10 @@ export class UpdateEmployeeDto {
 
     @IsNotEmpty()
     @IsString()
+    nrp: string;
+
+    @IsNotEmpty()
+    @IsString()
     name: string;
 
     @IsNotEmpty()

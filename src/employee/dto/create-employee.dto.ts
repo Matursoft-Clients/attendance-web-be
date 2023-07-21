@@ -40,6 +40,10 @@ export class CreateEmployeeDto {
 
     @IsNotEmpty()
     @IsString()
+    nrp: string;
+
+    @IsNotEmpty()
+    @IsString()
     name: string;
 
     @IsNotEmpty()

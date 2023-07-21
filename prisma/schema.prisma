@@ -79,7 +79,7 @@ model EMPLOYEES {
   branch_uuid                 String                        @db.Char(36)
   job_position_uuid           String                        @db.Char(36)
   nik                         String                        @db.VarChar(16)
-  nrp                         String                        @db.VarChar(50)
+  nrp                         String                        @unique(map: "employees_nrp_unique") @db.VarChar(50)
   name                        String                        @db.VarChar(60)
   email                       String                        @unique(map: "employees_email_unique") @db.VarChar(60)
   whatsapp_number             String                        @db.VarChar(16)

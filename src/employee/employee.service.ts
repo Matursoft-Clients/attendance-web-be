@@ -13,14 +13,26 @@ export class EmployeeService {
   async create(createEmployeeDto: CreateEmployeeDto, photoFileName: string) {
 
     // Cek duplicate Email
-    const employee = await this.findEmployeeByEmail(createEmployeeDto.email);
+    const employee_email = await this.findEmployeeByEmail(createEmployeeDto.email);
 
-
-    if (employee) {
+    if (employee_email) {
       throw new HttpException(
         {
           code: HttpStatus.UNPROCESSABLE_ENTITY,
           msg: 'Employee failed to create! Email already in use.',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    // Cek duplicate NRP
+    const employee_nrp = await this.findEmployeeByNRP(createEmployeeDto.nrp);
+
+    if (employee_nrp) {
+      throw new HttpException(
+        {
+          code: HttpStatus.UNPROCESSABLE_ENTITY,
+          msg: 'Employee failed to create! NRP already in use.',
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
@@ -42,7 +54,6 @@ export class EmployeeService {
     // Cek Job Position is valid or not
     const jobPosition = await this.findJobPositionByUuid(createEmployeeDto.job_position_uuid);
 
-
     if (!jobPosition) {
       throw new HttpException(
         {
@@ -58,6 +69,7 @@ export class EmployeeService {
         data: {
           uuid: uuidv4(),
           nik: createEmployeeDto.nik,
+          nrp: createEmployeeDto.nrp,
           name: createEmployeeDto.name,
           branch_uuid: createEmployeeDto.branch_uuid,
           job_position_uuid: createEmployeeDto.job_position_uuid,
@@ -107,6 +119,10 @@ export class EmployeeService {
     return await this.prisma.eMPLOYEES.findUnique({ where: { email } })
   }
 
+  async findEmployeeByNRP(nrp: string) {
+    return await this.prisma.eMPLOYEES.findUnique({ where: { nrp } })
+  }
+
   async findBranchByUuid(uuid: string) {
     return await this.prisma.bRANCHES.findUnique({ where: { uuid } })
   }
@@ -141,14 +157,29 @@ export class EmployeeService {
     }
 
     // Cek duplicate Email
-    const employee = await this.findEmployeeByEmail(updateEmployeeDto.email);
+    const employee_email = await this.findEmployeeByEmail(updateEmployeeDto.email);
 
-    if (employee) {
-      if (updateEmployeeDto.email == employee.email && employeeInUpdate.email !== updateEmployeeDto.email) {
+    if (employee_email) {
+      if (updateEmployeeDto.email == employee_email.email && employeeInUpdate.email !== updateEmployeeDto.email) {
         throw new HttpException(
           {
             code: HttpStatus.UNPROCESSABLE_ENTITY,
             msg: 'Employee failed to update! Email already in use.',
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+    }
+
+    // Cek duplicate NRP
+    const employee_nrp = await this.findEmployeeByNRP(updateEmployeeDto.nrp);
+
+    if (employee_nrp) {
+      if (updateEmployeeDto.nrp == employee_nrp.nrp && employeeInUpdate.nrp !== updateEmployeeDto.nrp) {
+        throw new HttpException(
+          {
+            code: HttpStatus.UNPROCESSABLE_ENTITY,
+            msg: 'Employee failed to update! NRP already in use.',
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
         );
@@ -186,6 +217,7 @@ export class EmployeeService {
         where: { uuid },
         data: {
           nik: updateEmployeeDto.nik,
+          nrp: updateEmployeeDto.nrp,
           name: updateEmployeeDto.name,
           branch_uuid: updateEmployeeDto.branch_uuid,
           job_position_uuid: updateEmployeeDto.job_position_uuid,
