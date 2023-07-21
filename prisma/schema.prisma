@@ -60,15 +60,13 @@ model DAILY_ATTENDANCES {
   presence_entry_hour      String?                                  @db.VarChar(255)
   presence_exit_status     DAILY_ATTENDANCES_presence_exit_status?
   presence_exit_hour       String?                                  @db.VarChar(255)
-  presence_entry_address   String                                   @db.Text
-  presence_entry_latitude  Float
-  presence_entry_longitude Float
-  presence_exit_address    String?                                  @db.Text
+  presence_entry_latitude  Float?
+  presence_entry_longitude Float?
   presence_exit_latitude   Float?
   presence_exit_longitude  Float?
-  reference_address        String                                   @db.Text
-  reference_latitude       Float
-  reference_longitude      Float
+  reference_address        String?                                  @db.Text
+  reference_latitude       Float?
+  reference_longitude      Float?
   created_at               DateTime?                                @db.Timestamp(0)
   updated_at               DateTime?                                @db.Timestamp(0)
   EMPLOYEES                EMPLOYEES                                @relation(fields: [employee_uuid], references: [uuid], onDelete: Cascade, onUpdate: Restrict, map: "daily_attendances_employee_uuid_foreign")
@@ -81,9 +79,10 @@ model EMPLOYEES {
   branch_uuid                 String                        @db.Char(36)
   job_position_uuid           String                        @db.Char(36)
   nik                         String                        @db.VarChar(16)
+  nrp                         String                        @db.VarChar(50)
   name                        String                        @db.VarChar(60)
   email                       String                        @unique(map: "employees_email_unique") @db.VarChar(60)
-  whatsapp_number             String                        @db.VarChar(14)
+  whatsapp_number             String                        @db.VarChar(16)
   password                    String                        @db.VarChar(255)
   photo                       String?                       @db.VarChar(255)
   token                       String?                       @db.LongText
@@ -173,6 +172,7 @@ enum DAILY_ATTENDANCES_presence_entry_status {
   on_time
   late
   not_present
+  not_valid
 }
 
 enum DAILY_ATTENDANCES_presence_exit_status {

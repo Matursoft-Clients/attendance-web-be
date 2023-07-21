@@ -41,9 +41,9 @@ export class DailyAttendanceService {
 
         dailyAttendances = await this.prisma.$queryRaw
           `SELECT *
-        FROM
-          DAILY_ATTENDANCES
-        WHERE DATE_FORMAT(DAILY_ATTENDANCES.date, '%Y-%m-%d') BETWEEN ${start_date} AND ${end_date}`
+          FROM
+            DAILY_ATTENDANCES
+          WHERE DATE_FORMAT(DAILY_ATTENDANCES.date, '%Y-%m-%d') BETWEEN ${start_date} AND ${end_date}`
       }
 
       let dailyAttendancesExtendEmployee = [];
