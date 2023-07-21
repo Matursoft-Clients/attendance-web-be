@@ -123,6 +123,28 @@ export class EmployeeService {
     return await this.prisma.eMPLOYEES.findUnique({ where: { nrp } })
   }
 
+  async refreshEmployeeDevice(uuid: string) {
+    try {
+      const updateEmployee = await this.prisma.eMPLOYEES.update({
+        where: { uuid },
+        data: {
+          device_id: null,
+          device_name: null,
+        },
+      });
+
+      return updateEmployee;
+    } catch (error) {
+      throw new HttpException(
+        {
+          code: HttpStatus.UNPROCESSABLE_ENTITY,
+          msg: "Error! Please Contact Admin.",
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+  }
+
   async findBranchByUuid(uuid: string) {
     return await this.prisma.bRANCHES.findUnique({ where: { uuid } })
   }
@@ -231,7 +253,6 @@ export class EmployeeService {
       return updateEmployee;
 
     } catch (error) {
-      console.log(error)
       throw new HttpException(
         {
           code: HttpStatus.UNPROCESSABLE_ENTITY,

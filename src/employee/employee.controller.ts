@@ -109,6 +109,16 @@ export class EmployeeController {
     return fileName
   }
 
+  @Patch('refresh-device/:uuid')
+  async RefreshEmployeeDevice(@Param('uuid') uuid: string, @Res() res: Response) {
+    const createdEmployee = await this.employeeService.refreshEmployeeDevice(uuid);
+
+    return res.status(200).json({
+      code: 200,
+      msg: `Employee ${createdEmployee.name} device has been successfully refreshed.`,
+    });
+  }
+
   @Delete(':uuid')
   async remove(@Param('uuid') uuid: string, @Res() res: Response) {
     const employee = await this.employeeService.remove(uuid);
