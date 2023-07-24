@@ -9,6 +9,6 @@ export class UpdateJobPositionDto extends PartialType(CreateJobPositionDto) {
 
     @IsOptional()
     @IsString()
-    @Length(10, 10)
+    @Length(3, 3)
     code?: string;
 }
