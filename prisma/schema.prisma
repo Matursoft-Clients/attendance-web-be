@@ -28,7 +28,7 @@ model BANNERS {
 model BRANCHES {
   uuid                        String      @id @db.Char(36)
   name                        String      @db.VarChar(255)
-  code                        String      @db.VarChar(255)
+  code                        String      @unique(map: "branches_code_unique") @db.VarChar(10)
   presence_location_address   String      @db.Text
   presence_location_latitude  Float
   presence_location_longitude Float
@@ -80,7 +80,7 @@ model EMPLOYEES {
   job_position_uuid           String                        @db.Char(36)
   device_id                   String?                       @unique(map: "employees_device_id_unique") @db.VarChar(50)
   device_name                 String?                       @db.VarChar(50)
-  nik                         String                        @db.VarChar(16)
+  nik                         String                        @unique(map: "employees_nik_unique") @db.VarChar(16)
   nrp                         String                        @unique(map: "employees_nrp_unique") @db.VarChar(50)
   name                        String                        @db.VarChar(60)
   email                       String                        @unique(map: "employees_email_unique") @db.VarChar(60)
@@ -102,7 +102,7 @@ model EMPLOYEES {
 model JOB_POSITIONS {
   uuid       String      @id @db.Char(36)
   name       String      @db.VarChar(60)
-  code       String      @db.VarChar(10)
+  code       String      @unique(map: "job_positions_code_unique") @db.VarChar(10)
   created_at DateTime?   @db.Timestamp(0)
   updated_at DateTime?   @db.Timestamp(0)
   EMPLOYEES  EMPLOYEES[]
