@@ -9,20 +9,20 @@ export class BranchService {
   constructor(private prisma: PrismaService) { }
 
   async create(createBranchDto: CreateBranchDto) {
+    // Cek duplicate Code
+    const branch_code = await this.findBranchesByCode(createBranchDto.code);
+
+    if (branch_code) {
+      throw new HttpException(
+        {
+          code: HttpStatus.UNPROCESSABLE_ENTITY,
+          msg: 'Branch failed to create! Branch Code already in use.',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
     try {
-      // Cek duplicate Code
-      const branch_code = await this.findBranchesByCode(createBranchDto.code);
-
-      if (branch_code) {
-        throw new HttpException(
-          {
-            code: HttpStatus.UNPROCESSABLE_ENTITY,
-            msg: 'Branch failed to create! Branch Code already in use.',
-          },
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
-      }
-
       const createBranch = await this.prisma.bRANCHES.create({
         data: {
           uuid: uuidv4(),

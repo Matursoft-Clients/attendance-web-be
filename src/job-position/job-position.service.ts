@@ -9,20 +9,21 @@ export class JobPositionService {
   constructor(private prisma: PrismaService) { }
 
   async create(createJobPositionDto: CreateJobPositionDto) {
+    // Cek duplicate Code
+    const job_position_code = await this.findJobPositionByCode(createJobPositionDto.code);
+    console.log(job_position_code)
+
+    if (job_position_code) {
+      throw new HttpException(
+        {
+          code: HttpStatus.UNPROCESSABLE_ENTITY,
+          msg: 'Job Position failed to create! Job Position Code already in use.',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
     try {
-      // Cek duplicate Code
-      const job_position_code = await this.findJobPositionByCode(createJobPositionDto.code);
-
-      if (job_position_code) {
-        throw new HttpException(
-          {
-            code: HttpStatus.UNPROCESSABLE_ENTITY,
-            msg: 'Job Position failed to create! Job Position Code already in use.',
-          },
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
-      }
-
       const createJobPosition = await this.prisma.jOB_POSITIONS.create({
         data: {
           uuid: uuidv4(),
@@ -35,6 +36,8 @@ export class JobPositionService {
 
       return createJobPosition;
     } catch (error) {
+
+      console.log(error)
       throw new HttpException(
         {
           code: HttpStatus.UNPROCESSABLE_ENTITY,
