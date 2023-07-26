@@ -38,6 +38,19 @@ export class EmployeeService {
       );
     }
 
+    // Cek duplicate NIK
+    const employee_nik = await this.findEmployeeByNIK(createEmployeeDto.nik);
+
+    if (employee_nik) {
+      throw new HttpException(
+        {
+          code: HttpStatus.UNPROCESSABLE_ENTITY,
+          msg: 'Employee failed to create! NIK already in use.',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
     // Cek Branch is valid or not
     const branch = await this.findBranchByUuid(createEmployeeDto.branch_uuid);
 
@@ -123,6 +136,10 @@ export class EmployeeService {
     return await this.prisma.eMPLOYEES.findUnique({ where: { nrp } })
   }
 
+  async findEmployeeByNIK(nik: string) {
+    return await this.prisma.eMPLOYEES.findUnique({ where: { nik } })
+  }
+
   async refreshEmployeeDevice(uuid: string) {
     try {
       const updateEmployee = await this.prisma.eMPLOYEES.update({
@@ -206,6 +223,19 @@ export class EmployeeService {
           HttpStatus.UNPROCESSABLE_ENTITY,
         );
       }
+    }
+
+    // Cek duplicate NIK
+    const employee_nik = await this.findEmployeeByNIK(updateEmployeeDto.nik);
+
+    if (updateEmployeeDto.nik == employee_nik.nik && employeeInUpdate.nik !== updateEmployeeDto.nik) {
+      throw new HttpException(
+        {
+          code: HttpStatus.UNPROCESSABLE_ENTITY,
+          msg: 'Employee failed to create! NIK already in use.',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
 
     // Cek Branch is valid or not
