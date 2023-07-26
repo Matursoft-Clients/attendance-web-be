@@ -10,6 +10,19 @@ export class BranchService {
 
   async create(createBranchDto: CreateBranchDto) {
     try {
+      // Cek duplicate Code
+      const branch_code = await this.findBranchesByCode(createBranchDto.code);
+
+      if (branch_code) {
+        throw new HttpException(
+          {
+            code: HttpStatus.UNPROCESSABLE_ENTITY,
+            msg: 'Branch failed to create! Branch Code already in use.',
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+
       const createBranch = await this.prisma.bRANCHES.create({
         data: {
           uuid: uuidv4(),
@@ -48,14 +61,31 @@ export class BranchService {
     return await this.prisma.eMPLOYEES.findFirst({ where: { branch_uuid } })
   }
 
-  async update(uuid: string, updateBranchDto: UpdateBranchDto) {
-    const branch = await this.findOne(uuid);
+  async findBranchesByCode(code: string) {
+    return await this.prisma.bRANCHES.findUnique({ where: { code } })
+  }
 
-    if (!branch) {
+  async update(uuid: string, updateBranchDto: UpdateBranchDto) {
+    const branchInUpdate = await this.findOne(uuid);
+
+    if (!branchInUpdate) {
       throw new HttpException(
         {
           code: HttpStatus.UNPROCESSABLE_ENTITY,
           msg: 'Branch failed to update! Record not found.',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    // Cek duplicate Code
+    const branch_code = await this.findBranchesByCode(updateBranchDto.code);
+
+    if (updateBranchDto.code == branch_code.code && branchInUpdate.code !== updateBranchDto.code) {
+      throw new HttpException(
+        {
+          code: HttpStatus.UNPROCESSABLE_ENTITY,
+          msg: 'Branch failed to create! Branch Code already in use.',
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
