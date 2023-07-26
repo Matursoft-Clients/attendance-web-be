@@ -85,7 +85,7 @@ export class BranchService {
       throw new HttpException(
         {
           code: HttpStatus.UNPROCESSABLE_ENTITY,
-          msg: 'Branch failed to create! Branch Code already in use.',
+          msg: 'Branch failed to update! Branch Code already in use.',
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );

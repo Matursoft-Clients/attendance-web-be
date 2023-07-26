@@ -232,7 +232,7 @@ export class EmployeeService {
       throw new HttpException(
         {
           code: HttpStatus.UNPROCESSABLE_ENTITY,
-          msg: 'Employee failed to create! NIK already in use.',
+          msg: 'Employee failed to update! NIK already in use.',
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );

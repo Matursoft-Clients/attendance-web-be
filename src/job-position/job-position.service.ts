@@ -85,7 +85,7 @@ export class JobPositionService {
       throw new HttpException(
         {
           code: HttpStatus.UNPROCESSABLE_ENTITY,
-          msg: 'Job Position failed to create! Job Position Code already in use.',
+          msg: 'Job Position failed to update! Job Position Code already in use.',
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
