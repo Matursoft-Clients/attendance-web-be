@@ -10,6 +10,19 @@ export class JobPositionService {
 
   async create(createJobPositionDto: CreateJobPositionDto) {
     try {
+      // Cek duplicate Code
+      const job_position_code = await this.findJobPositionByCode(createJobPositionDto.code);
+
+      if (job_position_code) {
+        throw new HttpException(
+          {
+            code: HttpStatus.UNPROCESSABLE_ENTITY,
+            msg: 'Job Position failed to create! Job Position Code already in use.',
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+
       const createJobPosition = await this.prisma.jOB_POSITIONS.create({
         data: {
           uuid: uuidv4(),
@@ -40,19 +53,36 @@ export class JobPositionService {
     return await this.prisma.jOB_POSITIONS.findUnique({ where: { uuid } })
   }
 
+  async findJobPositionByCode(code: string) {
+    return await this.prisma.jOB_POSITIONS.findUnique({ where: { code } })
+  }
+
   async findJobPositionInEmployee(job_position_uuid: string) {
     return await this.prisma.eMPLOYEES.findFirst({ where: { job_position_uuid } })
   }
 
   async update(uuid: string, updateJobPositionDto: UpdateJobPositionDto) {
 
-    const jobPosition = await this.findOne(uuid);
+    const jobPositionInUpdate = await this.findOne(uuid);
 
-    if (!jobPosition) {
+    if (!jobPositionInUpdate) {
       throw new HttpException(
         {
           code: HttpStatus.UNPROCESSABLE_ENTITY,
           msg: 'Job Position failed to update! Record not found.',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    // Cek duplicate Code
+    const job_position_code = await this.findJobPositionByCode(updateJobPositionDto.code);
+
+    if (updateJobPositionDto.code == job_position_code.code && jobPositionInUpdate.code !== updateJobPositionDto.code) {
+      throw new HttpException(
+        {
+          code: HttpStatus.UNPROCESSABLE_ENTITY,
+          msg: 'Job Position failed to create! Job Position Code already in use.',
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
