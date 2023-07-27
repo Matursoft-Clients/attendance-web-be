@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/swagger';
 import { CreateBranchDto } from './create-branch.dto';
-import { IsLatitude, IsLongitude, IsNotEmpty, IsString } from 'class-validator';
+import { IsLatitude, IsLongitude, IsNotEmpty, IsString, Length } from 'class-validator';
 
 export class UpdateBranchDto extends PartialType(CreateBranchDto) {
     @IsNotEmpty()
@@ -9,6 +9,7 @@ export class UpdateBranchDto extends PartialType(CreateBranchDto) {
 
     @IsNotEmpty()
     @IsString()
+    @Length(3, 10)
     code: string;
 
     @IsNotEmpty()

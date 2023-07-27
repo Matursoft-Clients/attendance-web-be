@@ -1,4 +1,4 @@
-import { IsLatitude, IsLongitude, IsNotEmpty, IsString } from "class-validator";
+import { IsLatitude, IsLongitude, IsNotEmpty, IsString, Length } from "class-validator";
 
 export class CreateBranchDto {
     @IsNotEmpty()
@@ -7,6 +7,7 @@ export class CreateBranchDto {
 
     @IsNotEmpty()
     @IsString()
+    @Length(3, 10)
     code: string;
 
     @IsNotEmpty()
