@@ -4,9 +4,16 @@ import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as momentTimezone from 'moment-timezone';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  console.log(new Date().toString())
+
+  momentTimezone.tz.setDefault('Asia/Jakarta');
+
+  console.log(new Date().toString())
 
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,

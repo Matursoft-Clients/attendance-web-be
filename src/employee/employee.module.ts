@@ -16,6 +16,7 @@ export class EmployeeModule implements NestModule {
       .forRoutes(
         { path: 'employees', method: RequestMethod.GET },
         { path: 'employees', method: RequestMethod.POST },
+        { path: 'employees/import', method: RequestMethod.POST },
         { path: 'employees/:uuid', method: RequestMethod.POST },
         { path: 'employees/refresh-device/:uuid', method: RequestMethod.PATCH },
         { path: 'employees/:uuid', method: RequestMethod.PATCH },

@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Res } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
-import { CreateEmployeeDto, UpdateEmployeeDto, UpdateEmployeePhotoDto } from './dto';
+import { CreateEmployeeDto, ImportEmployeeDto, UpdateEmployeeDto, UpdateEmployeePhotoDto } from './dto';
 import { FileSystemStoredFile, FormDataRequest } from 'nestjs-form-data';
 import * as randomstring from 'randomstring';
 import { join } from 'path';
@@ -143,5 +143,16 @@ export class EmployeeController {
       code: 200,
       msg: 'Employee ' + employee.name + ' has been deleted.'
     })
+  }
+
+  @Post('import/employee')
+  @FormDataRequest({ storage: FileSystemStoredFile })
+  async importEmployees(@Body() importEmployeeDto: ImportEmployeeDto, @Res() res: Response) {
+    await this.employeeService.importEmployees(importEmployeeDto);
+
+    return res.status(200).json({
+      code: 200,
+      msg: `Employees successfully created.`,
+    });
   }
 }

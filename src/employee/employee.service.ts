@@ -1,9 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateEmployeeDto, UpdateEmployeeDto } from './dto';
+import { CreateEmployeeDto, ImportEmployeeDto, UpdateEmployeeDto } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { FILE_URL } from 'src/config';
 import * as bcrypt from 'bcrypt';
+import * as XLSX from 'xlsx';
 
 @Injectable()
 export class EmployeeService {
@@ -331,6 +332,49 @@ export class EmployeeService {
 
     } catch (error) {
       console.log(error)
+    }
+  }
+
+  async importEmployees(importEmployeeDto: ImportEmployeeDto) {
+    try {
+      const workbook = XLSX.readFile(importEmployeeDto.file.path);
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const data: any = XLSX.utils.sheet_to_json(worksheet, { header: 1, raw: false, defval: null });
+
+      const employees: CreateEmployeeDto[] = data
+        .slice(1) // menghapus header (baris pertama)
+        .map((row) => ({
+          branch_uuid: '5c518bbe-3bf2-4b11-b5d6-ad5a6d636a5f',
+          job_position_uuid: '0027df32-debc-4f1b-ace5-9d723472c85e',
+          name: row[3],
+          nik: row[4],
+          nrp: row[5],
+          whatsapp_number: row[6],
+          email: row[7],
+          password: row[8],
+          password_confirmation: row[8],
+          // tambahkan mapping untuk field lainnya sesuai kebutuhan
+        }));
+
+      for (let i = 0; i < employees.length; i++) {
+        const employee = employees[i];
+
+        console.log(employee)
+
+        await this.create(employee, 'gWruoqV9iG.jpg');
+
+      }
+
+    } catch (error) {
+      console.log(error)
+      throw new HttpException(
+        {
+          code: HttpStatus.UNPROCESSABLE_ENTITY,
+          msg: "Error! Please Contact Admin.",
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
   }
 }
