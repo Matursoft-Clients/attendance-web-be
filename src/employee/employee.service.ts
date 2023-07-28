@@ -110,7 +110,7 @@ export class EmployeeService {
   }
 
   async findAll() {
-    const employees = await this.prisma.eMPLOYEES.findMany()
+    const employees = await this.prisma.eMPLOYEES.findMany({ orderBy: [{ created_at: 'desc' }] })
 
     let extendedEmployees = []
     for (let i = 0; i < employees.length; i++) {
