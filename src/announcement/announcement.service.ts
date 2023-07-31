@@ -13,7 +13,7 @@ export class AnnouncementService {
   async create(createAnnouncementDto: CreateAnnouncementDto, thumbnailFileName: string) {
 
     try {
-      return await this.prisma.aNNOUNCEMENTS.create({
+      const announcement = await this.prisma.aNNOUNCEMENTS.create({
         data: {
           uuid: uuidv4(),
           title: createAnnouncementDto.title,
@@ -24,6 +24,21 @@ export class AnnouncementService {
           updated_at: new Date()
         },
       });
+
+      const employees = await this.findAllEmployee()
+
+      for (let i = 0; i < employees.length; i++) {
+        const employee = employees[i];
+
+        await this.prisma.eMPLOYEE_HAS_ANNOUNCEMENT_NOTIFICATIONS.create({
+          data: {
+            uuid: uuidv4(),
+            employee_uuid: employee.uuid,
+            announcement_uuid: announcement.uuid,
+          }
+        })
+      }
+      return announcement
 
     } catch (error) {
       throw new HttpException(
@@ -44,6 +59,12 @@ export class AnnouncementService {
       rest.thumbnail = FILE_URL + 'announcement/' + rest.thumbnail
       return rest;
     });
+  }
+
+  async findAllEmployee() {
+    const employees = await this.prisma.eMPLOYEES.findMany({ select: { uuid: true } })
+
+    return employees
   }
 
   async findOne(uuid: string) {

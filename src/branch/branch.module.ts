@@ -15,6 +15,7 @@ export class BranchModule implements NestModule {
       .apply(AuthMiddleware)
       .forRoutes(
         { path: 'branches', method: RequestMethod.GET },
+        { path: 'branches/get-city/:name', method: RequestMethod.GET },
         { path: 'branches', method: RequestMethod.POST },
         { path: 'branches/:uuid', method: RequestMethod.PATCH },
         { path: 'branches/:uuid', method: RequestMethod.DELETE },

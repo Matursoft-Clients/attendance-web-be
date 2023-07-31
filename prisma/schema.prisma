@@ -8,13 +8,14 @@ datasource db {
 }
 
 model ANNOUNCEMENTS {
-  uuid       String    @id @db.Char(36)
-  title      String    @db.VarChar(100)
-  slug       String    @unique(map: "announcements_slug_unique") @db.VarChar(150)
-  thumbnail  String    @db.VarChar(255)
-  content    String    @db.Text
-  created_at DateTime? @db.Timestamp(0)
-  updated_at DateTime? @db.Timestamp(0)
+  uuid                                    String                                    @id @db.Char(36)
+  title                                   String                                    @db.VarChar(100)
+  slug                                    String                                    @unique(map: "announcements_slug_unique") @db.VarChar(150)
+  thumbnail                               String                                    @db.VarChar(255)
+  content                                 String                                    @db.Text
+  created_at                              DateTime?                                 @db.Timestamp(0)
+  updated_at                              DateTime?                                 @db.Timestamp(0)
+  EMPLOYEE_HAS_ANNOUNCEMENT_NOTIFICATIONS EMPLOYEE_HAS_ANNOUNCEMENT_NOTIFICATIONS[]
 }
 
 model BANNERS {
@@ -88,28 +89,42 @@ model DAILY_ATTENDANCES {
 }
 
 model EMPLOYEES {
-  uuid                        String                        @id @db.Char(36)
-  branch_uuid                 String                        @db.Char(36)
-  job_position_uuid           String                        @db.Char(36)
-  device_id                   String?                       @unique(map: "employees_device_id_unique") @db.VarChar(50)
-  device_name                 String?                       @db.VarChar(50)
-  nik                         String                        @unique(map: "employees_nik_unique") @db.VarChar(16)
-  nrp                         String                        @unique(map: "employees_nrp_unique") @db.VarChar(50)
-  name                        String                        @db.VarChar(60)
-  email                       String                        @unique(map: "employees_email_unique") @db.VarChar(60)
-  whatsapp_number             String                        @db.VarChar(16)
-  password                    String                        @db.VarChar(255)
-  photo                       String?                       @db.VarChar(255)
-  token                       String?                       @db.LongText
-  created_at                  DateTime?                     @db.Timestamp(0)
-  updated_at                  DateTime?                     @db.Timestamp(0)
-  CUSTOM_ATTENDANCE_LOCATIONS CUSTOM_ATTENDANCE_LOCATIONS[]
-  DAILY_ATTENDANCES           DAILY_ATTENDANCES[]
-  BRANCHES                    BRANCHES                      @relation(fields: [branch_uuid], references: [uuid], onUpdate: Restrict, map: "employees_branch_uuid_foreign")
-  JOB_POSITIONS               JOB_POSITIONS                 @relation(fields: [job_position_uuid], references: [uuid], onUpdate: Restrict, map: "employees_job_position_uuid_foreign")
+  uuid                                    String                                    @id @db.Char(36)
+  branch_uuid                             String                                    @db.Char(36)
+  job_position_uuid                       String                                    @db.Char(36)
+  device_id                               String?                                   @unique(map: "employees_device_id_unique") @db.VarChar(50)
+  device_name                             String?                                   @db.VarChar(50)
+  nik                                     String                                    @unique(map: "employees_nik_unique") @db.VarChar(16)
+  nrp                                     String                                    @unique(map: "employees_nrp_unique") @db.VarChar(50)
+  name                                    String                                    @db.VarChar(60)
+  email                                   String                                    @unique(map: "employees_email_unique") @db.VarChar(60)
+  whatsapp_number                         String                                    @db.VarChar(16)
+  password                                String                                    @db.VarChar(255)
+  photo                                   String?                                   @db.VarChar(255)
+  token                                   String?                                   @db.LongText
+  created_at                              DateTime?                                 @db.Timestamp(0)
+  updated_at                              DateTime?                                 @db.Timestamp(0)
+  CUSTOM_ATTENDANCE_LOCATIONS             CUSTOM_ATTENDANCE_LOCATIONS[]
+  DAILY_ATTENDANCES                       DAILY_ATTENDANCES[]
+  BRANCHES                                BRANCHES                                  @relation(fields: [branch_uuid], references: [uuid], onUpdate: Restrict, map: "employees_branch_uuid_foreign")
+  JOB_POSITIONS                           JOB_POSITIONS                             @relation(fields: [job_position_uuid], references: [uuid], onUpdate: Restrict, map: "employees_job_position_uuid_foreign")
+  EMPLOYEE_HAS_ANNOUNCEMENT_NOTIFICATIONS EMPLOYEE_HAS_ANNOUNCEMENT_NOTIFICATIONS[]
 
   @@index([branch_uuid], map: "employees_branch_uuid_foreign")
   @@index([job_position_uuid], map: "employees_job_position_uuid_foreign")
+}
+
+model EMPLOYEE_HAS_ANNOUNCEMENT_NOTIFICATIONS {
+  uuid              String        @id @db.Char(36)
+  employee_uuid     String        @db.Char(36)
+  announcement_uuid String        @db.Char(36)
+  created_at        DateTime?     @db.Timestamp(0)
+  updated_at        DateTime?     @db.Timestamp(0)
+  ANNOUNCEMENTS     ANNOUNCEMENTS @relation(fields: [announcement_uuid], references: [uuid], onDelete: Cascade, onUpdate: Restrict, map: "ac_uuid")
+  EMPLOYEES         EMPLOYEES     @relation(fields: [employee_uuid], references: [uuid], onDelete: Cascade, onUpdate: Restrict, map: "employee_has_announcement_notifications_employee_uuid_foreign")
+
+  @@index([announcement_uuid], map: "ac_uuid")
+  @@index([employee_uuid], map: "employee_has_announcement_notifications_employee_uuid_foreign")
 }
 
 model JOB_POSITIONS {
