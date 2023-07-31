@@ -27,6 +27,7 @@ model BANNERS {
 
 model BRANCHES {
   uuid                        String      @id @db.Char(36)
+  city_uuid                   String?     @db.Char(36)
   name                        String      @db.VarChar(255)
   code                        String      @unique(map: "branches_code_unique") @db.VarChar(10)
   presence_location_address   String      @db.Text
@@ -34,7 +35,19 @@ model BRANCHES {
   presence_location_longitude Float
   created_at                  DateTime?   @db.Timestamp(0)
   updated_at                  DateTime?   @db.Timestamp(0)
+  CITIES                      CITIES?     @relation(fields: [city_uuid], references: [uuid], onDelete: Restrict, onUpdate: Restrict, map: "branches_city_uuid_foreign")
   EMPLOYEES                   EMPLOYEES[]
+
+  @@index([city_uuid], map: "branches_city_uuid_foreign")
+}
+
+model CITIES {
+  uuid       String     @id @db.Char(36)
+  code       String     @unique(map: "cities_code_unique") @db.VarChar(4)
+  name       String     @db.VarChar(100)
+  created_at DateTime?  @db.Timestamp(0)
+  updated_at DateTime?  @db.Timestamp(0)
+  BRANCHES   BRANCHES[]
 }
 
 model CUSTOM_ATTENDANCE_LOCATIONS {

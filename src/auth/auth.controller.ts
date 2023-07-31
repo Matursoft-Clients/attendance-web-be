@@ -37,4 +37,19 @@ export class AuthController {
             },
         });
     }
+
+    @Get('dashboard')
+    async dashboard(@Res() res: Response) {
+        // Get Current User
+        const dashboard = await this.authService.dashboard();
+        console.log(dashboard)
+
+        return res.status(200).json({
+            code: 200,
+            msg: 'Here is the Dashboard',
+            data:
+                dashboard
+            ,
+        });
+    }
 }

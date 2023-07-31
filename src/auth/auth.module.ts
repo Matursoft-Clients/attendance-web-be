@@ -18,6 +18,7 @@ export class AuthModule implements NestModule {
             .apply(AuthMiddleware)
             .forRoutes(
                 { path: 'auth/user', method: RequestMethod.GET },
+                { path: 'auth/dashboard', method: RequestMethod.GET },
             )
     }
 }

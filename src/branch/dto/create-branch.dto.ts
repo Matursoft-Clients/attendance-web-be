@@ -3,6 +3,10 @@ import { IsLatitude, IsLongitude, IsNotEmpty, IsString, Length } from "class-val
 export class CreateBranchDto {
     @IsNotEmpty()
     @IsString()
+    city_uuid: string;
+
+    @IsNotEmpty()
+    @IsString()
     name: string;
 
     @IsNotEmpty()

@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateBranchDto, UpdateBranchDto } from './dto';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CITIES } from '@prisma/client';
 
 @Injectable()
 export class BranchService {
@@ -26,6 +27,7 @@ export class BranchService {
       const createBranch = await this.prisma.bRANCHES.create({
         data: {
           uuid: uuidv4(),
+          city_uuid: createBranchDto.city_uuid,
           name: createBranchDto.name,
           code: createBranchDto.code,
           presence_location_address: createBranchDto.presence_location_address,
@@ -51,6 +53,22 @@ export class BranchService {
 
   async findAll() {
     return await this.prisma.bRANCHES.findMany({ orderBy: [{ name: 'asc' }] })
+  }
+
+  async getCity(name: string) {
+    try {
+      const query = `%${name}%`;
+      const cities = await this.prisma.$queryRaw`SELECT * FROM CITIES WHERE name LIKE ${query} ORDER BY name`
+      return cities
+    } catch (error) {
+      throw new HttpException(
+        {
+          code: HttpStatus.UNPROCESSABLE_ENTITY,
+          msg: "Error! Please Contact Admin.",
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
   }
 
   async findOne(uuid: string) {
@@ -94,6 +112,7 @@ export class BranchService {
     return await this.prisma.bRANCHES.update({
       where: { uuid },
       data: {
+        city_uuid: updateBranchDto.city_uuid,
         name: updateBranchDto.name,
         code: updateBranchDto.code,
         presence_location_address: updateBranchDto.presence_location_address,

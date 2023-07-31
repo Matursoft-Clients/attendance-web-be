@@ -32,6 +32,19 @@ export class BranchController {
     });
   }
 
+  @Get('get-city/:name')
+  async getCity(@Param('name') name: string, @Res() res: Response) {
+
+    console.log(name)
+    const cities = await this.branchService.getCity(name);
+
+    return res.status(200).json({
+      code: 200,
+      msg: 'Here is Your Cities',
+      data: { cities },
+    });
+  }
+
   @Patch(':uuid')
   @FormDataRequest()
   async update(@Param('uuid') uuid: string, @Body() updateBranchDto: UpdateBranchDto, @Res() res: Response) {
