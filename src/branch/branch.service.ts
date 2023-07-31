@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateBranchDto, UpdateBranchDto } from './dto';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CITIES } from '@prisma/client';
 
 @Injectable()
 export class BranchService {
@@ -52,13 +51,20 @@ export class BranchService {
   }
 
   async findAll() {
-    return await this.prisma.bRANCHES.findMany({ orderBy: [{ name: 'asc' }] })
+    const branches = await this.prisma.bRANCHES.findMany({ orderBy: [{ name: 'asc' }] })
+
+    let extendedBranches = []
+    for (let i = 0; i < branches.length; i++) {
+      extendedBranches[i] = branches[i];
+      extendedBranches[i].city = await this.findCityByUuid(extendedBranches[i].city_uuid) ? await this.findCityByUuid(extendedBranches[i].city_uuid) : null;
+    }
+    return extendedBranches
   }
 
   async getCity(name: string) {
     try {
       const query = `%${name}%`;
-      const cities = await this.prisma.$queryRaw`SELECT * FROM CITIES WHERE name LIKE ${query} ORDER BY name`
+      const cities = await this.prisma.$queryRaw`SELECT * FROM CITIES WHERE name LIKE ${query} ORDER BY name LIMIT 10`
       return cities
     } catch (error) {
       throw new HttpException(
@@ -81,6 +87,10 @@ export class BranchService {
 
   async findBranchesByCode(code: string) {
     return await this.prisma.bRANCHES.findUnique({ where: { code } })
+  }
+
+  async findCityByUuid(uuid: string) {
+    return await this.prisma.cITIES.findUnique({ where: { uuid } })
   }
 
   async update(uuid: string, updateBranchDto: UpdateBranchDto) {
