@@ -109,28 +109,40 @@ export class BranchService {
     // Cek duplicate Code
     const branch_code = await this.findBranchesByCode(updateBranchDto.code);
 
-    if (updateBranchDto.code == branch_code.code && branchInUpdate.code !== updateBranchDto.code) {
+    if (branch_code) {
+      if (updateBranchDto.code == branch_code.code && branchInUpdate.code !== updateBranchDto.code) {
+        throw new HttpException(
+          {
+            code: HttpStatus.UNPROCESSABLE_ENTITY,
+            msg: 'Branch failed to update! Branch Code already in use.',
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+    }
+
+    try {
+      return await this.prisma.bRANCHES.update({
+        where: { uuid },
+        data: {
+          city_uuid: updateBranchDto.city_uuid,
+          name: updateBranchDto.name,
+          code: updateBranchDto.code,
+          presence_location_address: updateBranchDto.presence_location_address,
+          presence_location_latitude: +updateBranchDto.presence_location_latitude,
+          presence_location_longitude: +updateBranchDto.presence_location_longitude,
+          updated_at: new Date()
+        }
+      })
+    } catch (error) {
       throw new HttpException(
         {
           code: HttpStatus.UNPROCESSABLE_ENTITY,
-          msg: 'Branch failed to update! Branch Code already in use.',
+          msg: "Error! Please Contact Admin.",
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
-
-    return await this.prisma.bRANCHES.update({
-      where: { uuid },
-      data: {
-        city_uuid: updateBranchDto.city_uuid,
-        name: updateBranchDto.name,
-        code: updateBranchDto.code,
-        presence_location_address: updateBranchDto.presence_location_address,
-        presence_location_latitude: +updateBranchDto.presence_location_latitude,
-        presence_location_longitude: +updateBranchDto.presence_location_longitude,
-        updated_at: new Date()
-      }
-    })
   }
 
   async remove(uuid: string) {

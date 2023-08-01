@@ -65,7 +65,6 @@ export class JobPositionService {
   }
 
   async update(uuid: string, updateJobPositionDto: UpdateJobPositionDto) {
-
     const jobPositionInUpdate = await this.findOne(uuid);
 
     if (!jobPositionInUpdate) {
@@ -81,14 +80,16 @@ export class JobPositionService {
     // Cek duplicate Code
     const job_position_code = await this.findJobPositionByCode(updateJobPositionDto.code);
 
-    if (updateJobPositionDto.code == job_position_code.code && jobPositionInUpdate.code !== updateJobPositionDto.code) {
-      throw new HttpException(
-        {
-          code: HttpStatus.UNPROCESSABLE_ENTITY,
-          msg: 'Job Position failed to update! Job Position Code already in use.',
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+    if (job_position_code) {
+      if (updateJobPositionDto.code == job_position_code.code && jobPositionInUpdate.code !== updateJobPositionDto.code) {
+        throw new HttpException(
+          {
+            code: HttpStatus.UNPROCESSABLE_ENTITY,
+            msg: 'Job Position failed to update! Job Position Code already in use.',
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
     }
 
     return await this.prisma.jOB_POSITIONS.update({
