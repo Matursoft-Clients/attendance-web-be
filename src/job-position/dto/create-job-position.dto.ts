@@ -10,6 +10,6 @@ export class CreateJobPositionDto {
 
     @IsNotEmpty()
     @IsString()
-    @Length(3, 10)
+    @Length(2, 10)
     code: string;
 }
