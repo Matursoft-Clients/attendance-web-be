@@ -229,14 +229,16 @@ export class EmployeeService {
     // Cek duplicate NIK
     const employee_nik = await this.findEmployeeByNIK(updateEmployeeDto.nik);
 
-    if (updateEmployeeDto.nik == employee_nik.nik && employeeInUpdate.nik !== updateEmployeeDto.nik) {
-      throw new HttpException(
-        {
-          code: HttpStatus.UNPROCESSABLE_ENTITY,
-          msg: 'Employee failed to update! NIK already in use.',
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+    if (employee_nik) {
+      if (updateEmployeeDto.nik == employee_nik.nik && employeeInUpdate.nik !== updateEmployeeDto.nik) {
+        throw new HttpException(
+          {
+            code: HttpStatus.UNPROCESSABLE_ENTITY,
+            msg: 'Employee failed to update! NIK already in use.',
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
     }
 
     // Cek Branch is valid or not
