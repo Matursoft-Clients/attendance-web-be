@@ -52,6 +52,19 @@ export class EmployeeController {
     });
   }
 
+  @Get('custom-attendances')
+  async findAllExceptCustomAttendanceEmployee(@Res() res: Response) {
+    const employees = await this.employeeService.findAllExcepCustomAttendanceEmployees()
+
+    return res.status(200).json({
+        code: 200,
+        msg: 'Here is Your Employees',
+        data: {
+          employees
+        },
+      });
+  }
+
   @Patch(':uuid')
   @FormDataRequest({ storage: FileSystemStoredFile })
   async update(@Param('uuid') uuid: string, @Body() updateEmployeeDto: UpdateEmployeeDto, @Res() res: Response) {

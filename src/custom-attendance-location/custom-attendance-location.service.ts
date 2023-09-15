@@ -10,45 +10,47 @@ export class CustomAttendanceLocationService {
 
   async create(createCustomAttendanceLocationDto: CreateCustomAttendanceLocationDto) {
 
-    const employee = await this.findEmployeeByUuid(createCustomAttendanceLocationDto.employee_uuid);
+    createCustomAttendanceLocationDto.employee_uuid.forEach(async (employeeUuid) => {
+        const employee = await this.findEmployeeByUuid(employeeUuid);
 
-    if (!employee) {
-      throw new HttpException(
-        {
-          code: HttpStatus.UNPROCESSABLE_ENTITY,
-          msg: 'Custom attendance location failed to create! No Employee found.',
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
+        if (!employee) {
+            throw new HttpException(
+              {
+                code: HttpStatus.UNPROCESSABLE_ENTITY,
+                msg: 'Custom attendance location failed to create! No Employee found.',
+              },
+              HttpStatus.UNPROCESSABLE_ENTITY,
+            );
+          }
 
-    try {
-      const createCustomAttendanceLocation = await this.prisma.cUSTOM_ATTENDANCE_LOCATIONS.create({
-        data: {
-          uuid: uuidv4(),
-          employee_uuid: createCustomAttendanceLocationDto.employee_uuid,
-          start_date: new Date(createCustomAttendanceLocationDto.start_date),
-          end_date: new Date(createCustomAttendanceLocationDto.end_date),
-          presence_location_address: createCustomAttendanceLocationDto.presence_location_address,
-          presence_location_latitude: +createCustomAttendanceLocationDto.presence_location_latitude,
-          presence_location_longitude: +createCustomAttendanceLocationDto.presence_location_longitude,
-          created_at: new Date(),
-          updated_at: new Date()
-        },
-      });
-
-      return createCustomAttendanceLocation;
-
-    } catch (error) {
-      console.log(error)
-      throw new HttpException(
-        {
-          code: HttpStatus.UNPROCESSABLE_ENTITY,
-          msg: "Error! Please Contact Admin.",
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
+          try {
+            const createCustomAttendanceLocation = await this.prisma.cUSTOM_ATTENDANCE_LOCATIONS.create({
+              data: {
+                uuid: uuidv4(),
+                employee_uuid: employeeUuid,
+                start_date: new Date(createCustomAttendanceLocationDto.start_date),
+                end_date: new Date(createCustomAttendanceLocationDto.end_date),
+                presence_location_address: createCustomAttendanceLocationDto.presence_location_address,
+                presence_location_latitude: +createCustomAttendanceLocationDto.presence_location_latitude,
+                presence_location_longitude: +createCustomAttendanceLocationDto.presence_location_longitude,
+                created_at: new Date(),
+                updated_at: new Date()
+              },
+            });
+      
+            return createCustomAttendanceLocation;
+      
+          } catch (error) {
+            console.log(error)
+            throw new HttpException(
+              {
+                code: HttpStatus.UNPROCESSABLE_ENTITY,
+                msg: "Error! Please Contact Admin.",
+              },
+              HttpStatus.UNPROCESSABLE_ENTITY,
+            );
+          }
+    })
   }
 
   async findAll() {

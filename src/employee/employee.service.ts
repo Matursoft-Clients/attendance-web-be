@@ -125,6 +125,31 @@ export class EmployeeService {
     return extendedEmployees
   }
 
+  async findAllExcepCustomAttendanceEmployees() {
+    let employees = await this.prisma.eMPLOYEES.findMany({ 
+        include: {
+            CUSTOM_ATTENDANCE_LOCATIONS: true
+        }, 
+        orderBy: [{ name: 'asc' }] 
+    })
+
+    employees = employees.filter((employee) => {
+        return employee.CUSTOM_ATTENDANCE_LOCATIONS.length == 0
+    })
+
+    let extendedEmployees = []
+    for (let i = 0; i < employees.length; i++) {
+      extendedEmployees[i] = employees[i];
+      delete extendedEmployees[i].password;
+      delete extendedEmployees[i].token;
+      extendedEmployees[i].photo ? (extendedEmployees[i].photo = FILE_URL + 'employee/' + extendedEmployees[i].photo) : null;
+      extendedEmployees[i].branch = await this.findBranchByUuid(extendedEmployees[i].branch_uuid);
+      extendedEmployees[i].job_position = await this.findJobPositionByUuid(extendedEmployees[i].job_position_uuid);
+    }
+
+    return extendedEmployees
+  }
+
   async findOne(uuid: string) {
     return await this.prisma.eMPLOYEES.findUnique({ where: { uuid } })
   }

@@ -5,7 +5,7 @@ export class CreateCustomAttendanceLocationDto {
     uuid: string;
 
     @IsNotEmpty()
-    employee_uuid: string;
+    employee_uuid: Array<string>;
 
     @IsNotEmpty()
     start_date: Date;
