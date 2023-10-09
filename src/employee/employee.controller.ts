@@ -83,7 +83,7 @@ export class EmployeeController {
           }
         });
       }
-      // Update coloumn employee photo
+      // Update column employee photo
       await this.employeeService.updateEmployeePhoto(uuid, fileName);
     }
 
